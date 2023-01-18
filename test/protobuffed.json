@@ -1,0 +1,23 @@
+{
+	"version" : "v21.12",
+	"imports" : [
+		"test"
+	],
+	"inputs" : [
+		"test.proto"
+	],
+	"plugins" : [
+		{
+			"name" : "go",
+			"version" : "v1.28.1",
+			"options" : "paths=source_relative",
+			"output" : "test"
+		},
+		{
+			"name" : "go-grpc",
+			"version" : "v1.52.0",
+			"options" : "paths=source_relative",
+			"output" : "test"
+		}
+	]
+}
