@@ -15,7 +15,11 @@ This project was originally developed to ease the burden when setting up project
 
 ## Getting Started
 
+### Installing
+
 `go install github.com/armortal/protobuffed@latest`
+
+### Commands
 
 To generate source, run `protobuffed generate -f protobuffed.json`. This will call **install** and then generate the source.
 
