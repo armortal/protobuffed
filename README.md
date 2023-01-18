@@ -17,6 +17,37 @@ This project was originally developed to ease the burden when setting up project
 
 `go install github.com/armortal/protobuffed@latest`
 
+To generate source, run `protobuffed generate -f protobuffed.json`. This will call **install** and then generate the source.
+
+To install binaries only, run `protobuffed install -f protobuffed.json`.
+
+To view the executable command, run `protobuffed print -f protobuffed.json`.
+
+To view help, run `protobuffed --help`.
+
+```
+Protocol buffers buffed up. Making it easier to work with protobuf files and binaries
+
+Usage:
+  protobuffed [flags]
+  protobuffed [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  generate    Generate source code
+  help        Help about any command
+  install     Install binaries
+  print       Print the executable command.
+
+Flags:
+  -f, --file string   The configuration file (default "protobuffed.json")
+  -h, --help          help for protobuffed
+
+Use "protobuffed [command] --help" for more information about a command.
+```
+
+### Print
+
 ## Configuration
 
 This project uses a configuration file (default is `protobuffed.json`). This configuration file should reside in the repository where you will be generating your code and should be committed to Git. 
