@@ -46,8 +46,6 @@ Flags:
 Use "protobuffed [command] --help" for more information about a command.
 ```
 
-### Print
-
 ## Configuration
 
 This project uses a configuration file (default is `protobuffed.json`). This configuration file should reside in the repository where you will be generating your code and should be committed to Git. 
