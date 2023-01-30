@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package protobuf
 
 import (
@@ -56,7 +57,7 @@ func Install(version string, dst string) error {
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/%s/%s", version, release)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/%s/v%s", version, release)
 
 	// We need to create the output directory
 	dir := filepath.Join(dst, version)

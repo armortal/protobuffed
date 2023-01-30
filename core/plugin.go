@@ -19,15 +19,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
 var plugins = map[string]Plugin{}
 
+// GetPlugin returns the plugin associated with the name. Custom plugins may be registered with
+// RegisterPlugin.
 func GetPlugin(name string) (Plugin, bool) {
 	p, ok := plugins[name]
 	return p, ok
 }
 
+// RegisterPlugin registers a plugin.
 func RegisterPlugin(p Plugin) {
 	plugins[p.Name()] = p
 }
@@ -37,8 +41,7 @@ type Plugin interface {
 	// The directory provided is the root of the plugin directory.
 	Executable(version string, dir string) (string, error)
 
-	// Install installs the plugin in the directory provided. Implementions should create
-	// separate directories for each version inside this directory.
+	// Install installs the plugin in the directory provided and returns an error if it exists.
 	Install(version string, dst string) error
 
 	// Name returns the plugin name.

@@ -19,10 +19,43 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
-func TestPluginCache(t *testing.T) {
+type testPlugin struct{}
 
+func (p *testPlugin) Executable(version string, dir string) (string, error) {
+	return "", errors.New("not implemented")
+}
+
+func (p *testPlugin) Name() string {
+	return "testplugin"
+}
+
+func (p *testPlugin) Install(version string, dir string) error {
+	return errors.New("not implemented")
+}
+
+func TestPlugins(t *testing.T) {
+	p := &testPlugin{}
+
+	if _, ok := GetPlugin(p.Name()); ok {
+		t.Fatal("plugin should not exist")
+	}
+
+	RegisterPlugin(p)
+
+	v, ok := GetPlugin(p.Name())
+	if !ok {
+		t.Fatal("plugin should exist")
+	}
+
+	if v != p {
+		t.Fatal("plugin mismatch")
+	}
 }
