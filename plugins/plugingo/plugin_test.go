@@ -29,15 +29,20 @@ import (
 	"testing"
 )
 
+const testVersion = "1.28.1"
+
+func testDirectory(version string) (string, error) {
+	wd, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(wd, version), nil
+}
+
 func TestPlugin_Executable(t *testing.T) {
 	p := New()
-	// Use current directory as path
-	dir, err := filepath.Abs(".")
-	if err != nil {
-		t.Fatal(err)
-	}
 
-	e, err := p.Executable("1.28.1", dir)
+	dir, err := testDirectory(testVersion)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,6 +50,11 @@ func TestPlugin_Executable(t *testing.T) {
 	binary := "protoc-gen-go"
 	if runtime.GOOS == "windows" {
 		binary += ".exe"
+	}
+
+	e, err := p.Executable(testVersion, dir)
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	if e != filepath.Join(dir, binary) {
@@ -55,9 +65,12 @@ func TestPlugin_Executable(t *testing.T) {
 func TestPlugin_Install(t *testing.T) {
 	p := New()
 
-	// Use current directory as path
-	dir, err := filepath.Abs(".")
+	dir, err := testDirectory(testVersion)
 	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Mkdir(dir, 0700); err != nil {
 		t.Fatal(err)
 	}
 
