@@ -29,7 +29,7 @@ import (
 	"testing"
 )
 
-const testVersion = "1.52.0"
+const testVersion = "1.52.3"
 
 func testDirectory(version string) (string, error) {
 	wd, err := filepath.Abs(".")
@@ -77,6 +77,15 @@ func TestPlugin_Install(t *testing.T) {
 
 	if err := p.Install(testVersion, dir); err != nil {
 		t.Fatal(err)
+	}
+
+	binary := "protoc-gen-go-grpc"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
+		t.Fatal("exectuable doesn't exist")
 	}
 }
 

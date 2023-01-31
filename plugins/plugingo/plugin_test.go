@@ -74,7 +74,7 @@ func TestPlugin_Install(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := p.Install("1.28.1", dir); err != nil {
+	if err := p.Install(testVersion, dir); err != nil {
 		t.Fatal(err)
 	}
 

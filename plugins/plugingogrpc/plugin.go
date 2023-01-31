@@ -27,7 +27,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/armortal/protobuffed/util"
 )
@@ -71,7 +70,7 @@ func (p *Plugin) Install(version string, dst string) error {
 		}
 
 		// Download the repo.
-		if err := util.Download(fmt.Sprintf("https://github.com/grpc/grpc-go/archive/refs/tags/%s.zip", version), archive); err != nil {
+		if err := util.Download(fmt.Sprintf("https://github.com/grpc/grpc-go/archive/refs/tags/v%s.zip", version), archive); err != nil {
 			return err
 		}
 
@@ -82,7 +81,7 @@ func (p *Plugin) Install(version string, dst string) error {
 		cmd := exec.Command("go", "build", "-o", filepath.Join(bin, "protoc-gen-go-grpc"), ".")
 		// We join the filename twice because archives from git creates the same subfolder with its contents
 		// The unzipped contents don't have the v prefix
-		cmd.Dir = filepath.Join(dst, release(strings.Split(version, "v")[1]), "cmd", "protoc-gen-go-grpc")
+		cmd.Dir = filepath.Join(dst, release(version), "cmd", "protoc-gen-go-grpc")
 		if err := cmd.Run(); err != nil {
 			return err
 		}
