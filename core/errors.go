@@ -20,10 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package protobuf
+package core
 
-import "testing"
+import "fmt"
 
-func TestExecutable(t *testing.T) {}
+func ErrPluginNotSupported(name string) error {
+	return fmt.Errorf("plugin %s not supported", name)
+}
 
-func TestInstall(t *testing.T) {}
+func ErrRuntimeNotSupported(os string, arch string) error {
+	return fmt.Errorf("runtime %s:%s not supported", os, arch)
+}

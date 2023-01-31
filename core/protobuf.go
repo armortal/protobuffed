@@ -20,37 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package protobuf
+package core
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
 
-	err "github.com/armortal/protobuffed/core/errors"
 	"github.com/armortal/protobuffed/util"
 )
 
-// Exists checks whether the given version exists.
-func Exists(version string, dir string) bool {
-	if _, err := os.Stat(filepath.Join(dir, version)); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
 // Executable will return the path of the executable file or an error if there is one.
-func Executable(version string, dir string) (string, error) {
-	if !Exists(version, dir) {
-		return "", errors.New("plugin does not exist")
-	}
-	return filepath.Join(dir, version, "bin", binary()), nil
-}
+// func Executable(version string, dir string) (string, error) {
+// 	if !Exists(version, dir) {
+// 		return "", errors.New("plugin does not exist")
+// 	}
+// 	return filepath.Join(dir, version, "bin", binary()), nil
+// }
 
 // Install will download the binary and extract it.
-func Install(version string, dst string) error {
+func InstallProtobuf(version string, dst string) error {
+	if _, err := os.Stat(filepath.Join(dst, version)); os.IsExist(err) {
+		return nil
+	}
 	// Get the archive name
 	release, err := release(version)
 	if err != nil {
@@ -98,7 +91,7 @@ func release(version string) (string, error) {
 		case "amd64":
 			platform = "win64"
 		default:
-			return "", err.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
 	case "linux":
 		switch runtime.GOARCH {
@@ -107,12 +100,12 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "linux-aarch_64"
 		default:
-			return "", err.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
 	case "darwin":
 		platform = "osx-universal_binary"
 	default:
-		return "", err.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 	}
 
 	return fmt.Sprintf("protoc-%s-%s.zip", version, platform), nil

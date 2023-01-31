@@ -28,7 +28,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/armortal/protobuffed/core/errors"
+	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/util"
 )
 
@@ -80,7 +80,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "windows.arm64.zip"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
 	case "linux":
 		switch runtime.GOARCH {
@@ -89,7 +89,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "linux.arm64.tar.gz"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
 	case "darwin":
 		switch runtime.GOARCH {
@@ -98,10 +98,10 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "darwin.arm64.tar.gz"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
 	default:
-		return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 	}
 
 	return fmt.Sprintf("protoc-gen-go.v%s.%s", version, platform), nil

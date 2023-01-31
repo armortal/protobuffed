@@ -22,19 +22,9 @@
 
 package core
 
+import "os"
+
 var plugins = map[string]Plugin{}
-
-// GetPlugin returns the plugin associated with the name. Custom plugins may be registered with
-// RegisterPlugin.
-func GetPlugin(name string) (Plugin, bool) {
-	p, ok := plugins[name]
-	return p, ok
-}
-
-// RegisterPlugin registers a plugin.
-func RegisterPlugin(p Plugin) {
-	plugins[p.Name()] = p
-}
 
 // Plugin represents a protoc plugin (e.g. --go_out, --go-grpc_out). Plugins should implement
 // this interface and be registered with RegisteredPlugin in order for it to be available
@@ -50,4 +40,33 @@ type Plugin interface {
 
 	// Name returns the plugin name.
 	Name() string
+}
+
+// GetPlugin returns the plugin associated with the name. Custom plugins may be registered with
+// RegisterPlugin.
+func GetPlugin(name string) (Plugin, bool) {
+	p, ok := plugins[name]
+	return p, ok
+}
+
+// InstallPlugin installs the plugin using the given config.
+func InstallPlugin(plugin *PluginConfig) error {
+	p, ok := GetPlugin(plugin.Name)
+	if !ok {
+		return ErrPluginNotSupported(plugin.Name)
+	}
+	// First let's check and see if the plugin directory already exists.
+	// If not we'll create one.
+	dir := pluginPath(plugin.Name, plugin.Version)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			return err
+		}
+	}
+	return p.Install(plugin.Version, dir)
+}
+
+// RegisterPlugin registers a plugin.
+func RegisterPlugin(p Plugin) {
+	plugins[p.Name()] = p
 }

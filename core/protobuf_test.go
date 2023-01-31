@@ -20,14 +20,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package errors
-
-import "fmt"
-
-func ErrPluginNotSupported(name string) error {
-	return fmt.Errorf("plugin %s not supported", name)
-}
-
-func ErrRuntimeNotSupported(os string, arch string) error {
-	return fmt.Errorf("runtime %s:%s not supported", os, arch)
-}
+package core

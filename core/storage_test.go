@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,37 +21,3 @@
 // SOFTWARE.
 
 package core
-
-import (
-	"os"
-
-	"github.com/armortal/protobuffed/core/errors"
-	"github.com/armortal/protobuffed/core/protobuf"
-	"github.com/armortal/protobuffed/core/storage"
-)
-
-func InstallProtobuf(version string) error {
-	if !protobuf.Exists(version, storage.Protobuf()) {
-		if err := protobuf.Install(version, storage.Protobuf()); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// Download the plugin.
-func InstallPlugin(plugin *PluginConfig) error {
-	p, ok := GetPlugin(plugin.Name)
-	if !ok {
-		return errors.ErrPluginNotSupported(plugin.Name)
-	}
-	// First let's check and see if the plugin directory already exists.
-	// If not we'll create one.
-	dir := storage.Plugin(plugin.Name, plugin.Version)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			return err
-		}
-	}
-	return p.Install(plugin.Version, dir)
-}

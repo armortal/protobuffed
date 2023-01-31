@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,39 +23,33 @@
 package core
 
 import (
-	"testing"
+	"fmt"
+	"os"
+	"path/filepath"
 )
 
-// testPlugin used for testing purposes only so we can register this with the core.
-type testPlugin struct{}
+var STORAGE string
 
-func (p *testPlugin) Executable(version string, dir string) (string, error) {
-	return "testplugin", nil
-}
-
-func (p *testPlugin) Name() string {
-	return "testplugin"
-}
-
-func (p *testPlugin) Install(version string, dir string) error {
-	return nil
-}
-
-func TestPlugins(t *testing.T) {
-	p := &testPlugin{}
-
-	if _, ok := GetPlugin(p.Name()); ok {
-		t.Fatal("plugin should not exist")
+func init() {
+	if h := os.Getenv("PROTOBUFFED_HOME"); h != "" {
+		STORAGE = h
+	} else {
+		h, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		STORAGE = filepath.Join(h, ".protobuffed")
 	}
 
-	RegisterPlugin(p)
-
-	v, ok := GetPlugin(p.Name())
-	if !ok {
-		t.Fatal("plugin should exist")
+	if err := os.MkdirAll(filepath.Join(STORAGE, "plugins"), 0700); err != nil {
+		panic(err)
 	}
 
-	if v != p {
-		t.Fatal("plugin mismatch")
+	if err := os.MkdirAll(filepath.Join(STORAGE, "protobuf"), 0700); err != nil {
+		panic(err)
 	}
+}
+
+func pluginPath(name string, version string) string {
+	return filepath.Join(STORAGE, "plugins", fmt.Sprintf("protoc-gen-%s", name), version)
 }

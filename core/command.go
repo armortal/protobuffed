@@ -26,9 +26,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/armortal/protobuffed/core/errors"
-	"github.com/armortal/protobuffed/core/protobuf"
 	"github.com/armortal/protobuffed/core/storage"
+	"github.com/armortal/protobuffed/protobuf"
 )
 
 func Command(c *Config) (*exec.Cmd, error) {
@@ -41,10 +40,10 @@ func Command(c *Config) (*exec.Cmd, error) {
 	for _, plugin := range c.Plugins {
 		p, ok := GetPlugin(plugin.Name)
 		if !ok {
-			return nil, errors.ErrPluginNotSupported(plugin.Name)
+			return nil, ErrPluginNotSupported(plugin.Name)
 		}
 
-		binary, err := p.Executable(plugin.Version, storage.Plugin(plugin.Name, plugin.Version))
+		binary, err := p.Executable(plugin.Version, pluginPath(plugin.Name, plugin.Version))
 		if err != nil {
 			return nil, err
 		}

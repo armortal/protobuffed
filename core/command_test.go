@@ -20,51 +20,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package storage
+package core
 
-import (
-	"fmt"
-	"os"
-	"path/filepath"
-)
+import "testing"
 
-var home string
-
-func init() {
-	if h := os.Getenv("PROTOBUFFED_HOME"); h != "" {
-		home = h
-	} else {
-		h, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		home = filepath.Join(h, ".protobuffed")
+func TestCommand(t *testing.T) {
+	config := &Config{
+		Version: "21.12",
+		Imports: []string{"test"},
+		Inputs:  []string{"test.proto"},
+		Plugins: []*PluginConfig{
+			{
+				Name:    "testplugin",
+				Version: "1.0.0",
+				Options: "paths=source_relative",
+				Output:  "test",
+			},
+		},
 	}
 
-	if err := create(); err != nil {
-		panic(err)
-	}
-}
+	// register the test plugin
+	RegisterPlugin(&testPlugin{})
 
-func create() error {
-	if err := os.MkdirAll(filepath.Join(home, "plugins"), 0700); err != nil {
-		return err
+	act, err := Command(config)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if err := os.MkdirAll(filepath.Join(home, "protobuf"), 0700); err != nil {
-		return err
-	}
-	return nil
-}
-
-func Protobuf() string {
-	return filepath.Join(home, "protobuf")
-}
-
-func Plugins() string {
-	return filepath.Join(home, "plugins")
-}
-
-func Plugin(name string, version string) string {
-	return filepath.Join(Plugins(), fmt.Sprintf("protoc-gen-%s", name), version)
 }
