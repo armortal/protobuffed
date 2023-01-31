@@ -20,34 +20,64 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package plugingo
 
-var plugins = map[string]Plugin{}
+import (
+	"os"
+	"path/filepath"
+	"runtime"
+	"testing"
+)
 
-// GetPlugin returns the plugin associated with the name. Custom plugins may be registered with
-// RegisterPlugin.
-func GetPlugin(name string) (Plugin, bool) {
-	p, ok := plugins[name]
-	return p, ok
+func TestPlugin_Executable(t *testing.T) {
+	p := New()
+	// Use current directory as path
+	dir, err := filepath.Abs(".")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e, err := p.Executable("1.28.1", dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	binary := "protoc-gen-go"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if e != filepath.Join(dir, binary) {
+		t.Fatal("invalid executable")
+	}
 }
 
-// RegisterPlugin registers a plugin.
-func RegisterPlugin(p Plugin) {
-	plugins[p.Name()] = p
+func TestPlugin_Install(t *testing.T) {
+	p := New()
+
+	// Use current directory as path
+	dir, err := filepath.Abs(".")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := p.Install("1.28.1", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	binary := "protoc-gen-go"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, binary)); os.IsNotExist(err) {
+		t.Fatal("binary doesn't exist")
+	}
 }
 
-// Plugin represents a protoc plugin (e.g. --go_out, --go-grpc_out). Plugins should implement
-// this interface and be registered with RegisteredPlugin in order for it to be available
-// in the configuration file.
-type Plugin interface {
-
-	// Executable returns the path to the plugin executable, or an error if it exists.
-	// The directory provided is the root of the plugin directory.
-	Executable(version string, dir string) (string, error)
-
-	// Install installs the plugin in the directory provided and returns an error if it exists.
-	Install(version string, dst string) error
-
-	// Name returns the plugin name.
-	Name() string
+func TestPlugin_Name(t *testing.T) {
+	p := New()
+	if p.Name() != "go" {
+		t.Fatal()
+	}
 }

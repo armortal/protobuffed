@@ -43,7 +43,7 @@ func (p *Plugin) Install(version string, dst string) error {
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/%s/%s", version, release)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/v%s/%s", version, release)
 
 	archive := filepath.Join(dst, release)
 	if err := util.Download(url, archive); err != nil {
@@ -64,10 +64,6 @@ func (p *Plugin) Install(version string, dst string) error {
 
 func (p *Plugin) Executable(version string, dst string) (string, error) {
 	return filepath.Join(dst, "protoc-gen-go"), nil
-}
-
-func (p *Plugin) Extract(version string, dst string) error {
-	return nil
 }
 
 func (p *Plugin) Name() string {
@@ -108,5 +104,5 @@ func release(version string) (string, error) {
 		return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 	}
 
-	return fmt.Sprintf("protoc-gen-go.%s.%s", version, platform), nil
+	return fmt.Sprintf("protoc-gen-go.v%s.%s", version, platform), nil
 }
