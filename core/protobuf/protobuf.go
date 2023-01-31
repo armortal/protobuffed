@@ -28,7 +28,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	err "github.com/armortal/protobuffed/core/errors"
 	"github.com/armortal/protobuffed/util"
@@ -57,7 +56,7 @@ func Install(version string, dst string) error {
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/%s/v%s", version, release)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/v%s/%s", version, release)
 
 	// We need to create the output directory
 	dir := filepath.Join(dst, version)
@@ -116,11 +115,5 @@ func release(version string) (string, error) {
 		return "", err.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 	}
 
-	// The protoc binaries don't have a 'v' prefix for the version.
-	v := version
-	if strings.HasPrefix(version, "v") {
-		v = strings.Split(version, "v")[1]
-	}
-
-	return fmt.Sprintf("protoc-%s-%s.zip", v, platform), nil
+	return fmt.Sprintf("protoc-%s-%s.zip", version, platform), nil
 }

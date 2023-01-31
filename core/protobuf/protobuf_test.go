@@ -24,8 +24,6 @@ package protobuf
 
 import "testing"
 
-func TestExists(t *testing.T) {}
-
 func TestExecutable(t *testing.T) {}
 
 func TestInstall(t *testing.T) {}
