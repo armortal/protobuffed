@@ -57,7 +57,7 @@ The following is an example of what a configuration file looks like:
 
 ```json
 {
-	"version" : "v21.12",
+	"version" : "21.12",
 	"imports" : [
 		"test"
 	],
@@ -67,13 +67,13 @@ The following is an example of what a configuration file looks like:
 	"plugins" : [
 		{
 			"name" : "go",
-			"version" : "v1.28.1",
+			"version" : "1.28.1",
 			"options" : "paths=source_relative",
 			"output" : "test"
 		},
 		{
 			"name" : "go-grpc",
-			"version" : "v1.52.0",
+			"version" : "1.52.0",
 			"options" : "paths=source_relative",
 			"output" : "test"
 		}
