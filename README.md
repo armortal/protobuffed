@@ -12,7 +12,6 @@ This project was originally developed to ease the burden when setting up project
 	- [Installing](#installing)
 	- [Commands](#commands)
 - [Configuration](#configuration)
-- [Command](#command)
 - [Cache](#cache)
 - [Contributing](#contributing)
 
