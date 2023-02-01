@@ -45,9 +45,6 @@ func main() {
 	cmd := &cobra.Command{
 		Use:   "protobuffed",
 		Short: "Protocol buffers buffed up. Making it easier to work with protobuf files and binaries",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return nil
-		},
 	}
 
 	home, err := os.UserHomeDir()

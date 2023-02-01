@@ -11,7 +11,7 @@
 			"mode": "auto",
 			"program": "${workspaceFolder}",
 			"args": [
-				"generate", "-f", "test/protobuffed.json", "-c", "test/"
+				"generate", "-f", "testing/protobuffed.json", "-c", "testing/"
 			]
 		},
 		{
@@ -21,8 +21,8 @@
 			"mode": "auto",
 			"program": "${workspaceFolder}",
 			"args": [
-				"install", "-f", "test/protobuffed.json", "-c", "test/"
+				"install", "-f", "testing/protobuffed.json", "-c", "testing/"
 			]
-		}
+		},
 	]
 }

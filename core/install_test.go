@@ -29,12 +29,8 @@ import (
 )
 
 func Test_installProtobuf(t *testing.T) {
-	dir, err := filepath.Abs("test")
+	dir, err := os.MkdirTemp(".", "test*")
 	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err := os.Mkdir(dir, 0700); err != nil {
 		t.Fatal(err)
 	}
 
