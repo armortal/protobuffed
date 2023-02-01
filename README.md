@@ -57,7 +57,7 @@ If you would like to only install the binaries (no source code generated), run `
 
 ## Configuration
 
-A single configuration file (default is `protobuffed.json`) should reside in the repository where you will be generating your code and should be committed to Git. This configuration file is used as input to `protobuffed` to determine the version of the protobuf binary to execute as well as the plugins that should be used to generate source code. The following is an example of what a configuration file looks like:
+A single configuration file (default is `protobuffed.json`) should reside in the repository where you will be generating your code and should be committed to Git. This configuration file is used as input to `protobuffed` to determine the versions of the binaries to install and execute. The following is an example of what a configuration file looks like:
 
 ```json
 {
