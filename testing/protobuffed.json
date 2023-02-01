@@ -22,7 +22,7 @@
 		{
 			"name" : "grpc-web",
 			"version" : "1.4.2",
-			"options" : "import_style=commonjs,binary",
+			"options" : "import_style=commonjs+dts,mode=grpcwebtext",
 			"output" : "testing"
 		}
 	]

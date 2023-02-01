@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package command
+package print
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ import (
 
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "command",
+		Use:   "print",
 		Short: "Print the executable command.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read in the config.

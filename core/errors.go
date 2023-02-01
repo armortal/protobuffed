@@ -24,10 +24,10 @@ package core
 
 import "fmt"
 
-func errPluginNotSupported(name string) error {
+func ErrPluginNotSupported(name string) error {
 	return fmt.Errorf("plugin %s not supported", name)
 }
 
-func errRuntimeNotSupported(os string, arch string) error {
-	return fmt.Errorf("runtime %s:%s not supported", os, arch)
+func ErrRuntimeNotSupported(os string, arch string, name string, version string) error {
+	return fmt.Errorf("runtime %s:%s not supported for %s@%s", os, arch, name, version)
 }

@@ -79,6 +79,12 @@ A single configuration file (default is `protobuffed.json`) should reside in the
 			"version" : "1.52.3",
 			"options" : "paths=source_relative",
 			"output" : "test"
+		},
+		{
+			"name" : "grpc-web",
+			"version" : "1.4.2",
+			"options" : "import_style=commonjs+dts,mode=grpcwebtext",
+			"output" : "testing"
 		}
 	]
 }
@@ -95,7 +101,7 @@ A single configuration file (default is `protobuffed.json`) should reside in the
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`). |
+| `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`, `grpc-web`). |
 | `version` | **string** | The plugin version. |
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |

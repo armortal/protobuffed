@@ -52,7 +52,7 @@ func protobufArchiveName(version string) (string, error) {
 		case "amd64":
 			platform = "win64"
 		default:
-			return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
 		}
 	case "linux":
 		switch runtime.GOARCH {
@@ -61,12 +61,12 @@ func protobufArchiveName(version string) (string, error) {
 		case "arm64":
 			platform = "linux-aarch_64"
 		default:
-			return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
 		}
 	case "darwin":
 		platform = "osx-universal_binary"
 	default:
-		return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
 	}
 
 	return fmt.Sprintf("protoc-%s-%s.zip", version, platform), nil
