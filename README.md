@@ -103,7 +103,7 @@ A single configuration file (default is `protobuffed.json`) should reside in the
 
 ## Cache
 
-By default, all binaries are stored in the `$HOME/.protobuffed` directory. You can override the default specifying the `--cache` or `-c` flag when running commands.
+By default, all binaries are stored in the `$HOME/.protobuffed` directory. You can override the default by specifying the `--cache` or `-c` flag when running commands.
 
 The `protobuf` binaries are located at `protobuf/${VERSION}`.
 
