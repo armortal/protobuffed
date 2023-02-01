@@ -31,50 +31,43 @@ import (
 	"github.com/armortal/protobuffed/util"
 )
 
-// Executable will return the path of the executable file or an error if there is one.
-// func Executable(version string, dir string) (string, error) {
-// 	if !Exists(version, dir) {
-// 		return "", errors.New("plugin does not exist")
-// 	}
-// 	return filepath.Join(dir, version, "bin", binary()), nil
-// }
-
 // Install will download the binary and extract it.
 func InstallProtobuf(version string, dst string) error {
-	if _, err := os.Stat(filepath.Join(dst, version)); os.IsExist(err) {
+	// Check if it already exists
+	if _, err := os.Stat(filepath.Join(dst, "bin", getProtobufBinaryName())); os.IsExist(err) {
 		return nil
 	}
+
 	// Get the archive name
-	release, err := release(version)
+	archiveName, err := getProtobufArchiveName(version)
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/v%s/%s", version, release)
 
 	// We need to create the output directory
-	dir := filepath.Join(dst, version)
-	if err := os.Mkdir(dir, 0700); err != nil {
+	// dir := filepath.Join(dst, version)
+	// if err := os.Mkdir(dir, 0700); err != nil {
+	// 	return err
+	// }
+
+	archive := filepath.Join(dst, archiveName)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/v%s/%s", version, archiveName)
+	if err := util.Download(url, archive); err != nil {
 		return err
 	}
 
-	zip := filepath.Join(dir, "release.zip")
-	if err := util.Download(url, zip); err != nil {
-		return err
-	}
-
-	unzip := filepath.Join(dir)
-	if err := util.ExtractZip(zip, unzip); err != nil {
-		return err
-	}
-
-	if err := os.RemoveAll(zip); err != nil {
+	if err := util.ExtractZip(archive, dst); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func binary() string {
+func getProtobufExecutable(version string) string {
+	return filepath.Join(protobufPath(version), "bin", getProtobufBinaryName())
+}
+
+func getProtobufBinaryName() string {
 	f := "protoc"
 	if runtime.GOOS == "windows" {
 		f += ".exe"
@@ -82,7 +75,7 @@ func binary() string {
 	return f
 }
 
-func release(version string) (string, error) {
+func getProtobufArchiveName(version string) (string, error) {
 	// Get the base filename.
 	var platform string
 	switch runtime.GOOS {

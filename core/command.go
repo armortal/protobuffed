@@ -25,16 +25,10 @@ package core
 import (
 	"fmt"
 	"os/exec"
-
-	"github.com/armortal/protobuffed/core/storage"
-	"github.com/armortal/protobuffed/protobuf"
 )
 
 func Command(c *Config) (*exec.Cmd, error) {
-	b, err := protobuf.Executable(c.Version, storage.Protobuf())
-	if err != nil {
-		return nil, err
-	}
+	b := getProtobufExecutable(c.Version)
 	cmd := exec.Command(b)
 
 	for _, plugin := range c.Plugins {

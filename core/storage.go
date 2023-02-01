@@ -50,6 +50,10 @@ func init() {
 	}
 }
 
+func protobufPath(version string) string {
+	return filepath.Join(STORAGE, "protobuf", version)
+}
+
 func pluginPath(name string, version string) string {
 	return filepath.Join(STORAGE, "plugins", fmt.Sprintf("protoc-gen-%s", name), version)
 }
