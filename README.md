@@ -49,15 +49,15 @@ Flags:
 Use "protobuffed [command] --help" for more information about a command.
 ```
 
-To `install` binaries and `generate` source code, run `protobuffed generate -f protobuffed.json`.
+To install binaries and generate source code, run `protobuffed generate -f protobuffed.json`.
 
-To print the `command` which can be executed manually, run `protobuffed command -f protobuffed.json`.
+To print the command which can be executed manually, run `protobuffed command -f protobuffed.json`.
 
 If you would like to only install the binaries (no source code generated), run `protobuffed install -f protobuffed.json`.
 
 ## Configuration
 
-A single configuration file (default is `protobuffed.json`) should reside in the repository where you will be generating your code and should be committed to Git. This configuration file is used as input to **protobuffed** to determine the version of the protobuf binary to execute as well as the plugins that should be used to generate source code. The following is an example of what a configuration file looks like:
+A single configuration file (default is `protobuffed.json`) should reside in the repository where you will be generating your code and should be committed to Git. This configuration file is used as input to `protobuffed` to determine the version of the protobuf binary to execute as well as the plugins that should be used to generate source code. The following is an example of what a configuration file looks like:
 
 ```json
 {
@@ -77,7 +77,7 @@ A single configuration file (default is `protobuffed.json`) should reside in the
 		},
 		{
 			"name" : "go-grpc",
-			"version" : "1.52.0",
+			"version" : "1.52.3",
 			"options" : "paths=source_relative",
 			"output" : "test"
 		}
