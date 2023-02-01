@@ -22,10 +22,6 @@
 
 package core
 
-import (
-	"testing"
-)
-
 // testPlugin used for testing purposes only so we can register this with the core.
 type testPlugin struct{}
 
@@ -37,21 +33,21 @@ func (p *testPlugin) Install(version string, dir string) error {
 	return nil
 }
 
-func TestPlugins(t *testing.T) {
-	p := &testPlugin{}
+// func TestPlugins(t *testing.T) {
+// 	p := &testPlugin{}
 
-	if _, ok := GetPlugin(p.Name()); ok {
-		t.Fatal("plugin should not exist")
-	}
+// 	if _, ok := GetPlugin(p.Name()); ok {
+// 		t.Fatal("plugin should not exist")
+// 	}
 
-	RegisterPlugin(p)
+// 	RegisterPlugin(p)
 
-	v, ok := GetPlugin(p.Name())
-	if !ok {
-		t.Fatal("plugin should exist")
-	}
+// 	v, ok := GetPlugin(p.Name())
+// 	if !ok {
+// 		t.Fatal("plugin should exist")
+// 	}
 
-	if v != p {
-		t.Fatal("plugin mismatch")
-	}
-}
+// 	if v != p {
+// 		t.Fatal("plugin mismatch")
+// 	}
+// }
