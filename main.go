@@ -52,7 +52,7 @@ func main() {
 		panic(err)
 	}
 
-	cmd.PersistentFlags().StringP("cache", "c", filepath.Join(home, ".protobuffed"), "The directory where binaries will be installed.")
+	cmd.PersistentFlags().StringP("cache", "c", filepath.Join(home, ".protobuffed"), "The directory where binaries will be installed and executed from.")
 	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
 
 	cmd.AddCommand(generate.Command())
