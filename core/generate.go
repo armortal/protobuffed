@@ -31,6 +31,11 @@ import (
 // Calling this function will assume the binaries have been installed.
 // If an error occurs, it will be returned.
 func Generate(config *Config, cache string) error {
+	// We'll install binaries if they haven't been installed already
+	if err := Install(config, cache); err != nil {
+		return err
+	}
+
 	cmd, err := Command(config, cache)
 	if err != nil {
 		return err
