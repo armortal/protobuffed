@@ -23,10 +23,6 @@
 package generate
 
 import (
-	"bufio"
-	"fmt"
-
-	"github.com/armortal/protobuffed/cmd/install"
 	"github.com/armortal/protobuffed/core"
 	"github.com/spf13/cobra"
 )
@@ -41,60 +37,20 @@ func Command() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			cfg, err := core.ReadConfig(f)
+
+			cache, err := cmd.Flags().GetString("cache")
 			if err != nil {
 				return err
 			}
 
-			// Call the install command
-			if err := install.Exec(cfg); err != nil {
+			config, err := core.ReadConfig(f)
+			if err != nil {
 				return err
 			}
 
-			return Exec(cfg)
+			return core.Generate(config, cache)
 		},
 	}
 
 	return cmd
-}
-
-func Exec(c *core.Config) error {
-	cmd, err := core.Command(c)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Generating...")
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
-
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		return err
-	}
-
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-	outScanner := bufio.NewScanner(stdout)
-	go func() {
-		for outScanner.Scan() {
-			fmt.Printf("%s\n", outScanner.Text())
-		}
-	}()
-
-	errScanner := bufio.NewScanner(stderr)
-	go func() {
-		for errScanner.Scan() {
-			fmt.Printf("%s\n", errScanner.Text())
-		}
-	}()
-
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-	fmt.Println("Done")
-	return nil
 }

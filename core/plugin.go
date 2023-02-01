@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,11 @@
 
 package core
 
-import "os"
+import (
+	"fmt"
+	"path/filepath"
+	"runtime"
+)
 
 var plugins = map[string]Plugin{}
 
@@ -30,12 +34,8 @@ var plugins = map[string]Plugin{}
 // this interface and be registered with RegisteredPlugin in order for it to be available
 // in the configuration file.
 type Plugin interface {
-
-	// Executable returns the path to the plugin executable, or an error if it exists.
-	// The directory provided is the root of the plugin directory.
-	Executable(version string, dir string) (string, error)
-
-	// Install installs the plugin in the directory provided and returns an error if it exists.
+	// Install installs the plugin in the directory provided and returns an error if it exists. Implementations
+	// must install the binary at dst/bin/protoc-gen-${PLUGIN_NAME}.
 	Install(version string, dst string) error
 
 	// Name returns the plugin name.
@@ -49,24 +49,23 @@ func GetPlugin(name string) (Plugin, bool) {
 	return p, ok
 }
 
-// InstallPlugin installs the plugin using the given config.
-func InstallPlugin(plugin *PluginConfig) error {
-	p, ok := GetPlugin(plugin.Name)
-	if !ok {
-		return ErrPluginNotSupported(plugin.Name)
-	}
-	// First let's check and see if the plugin directory already exists.
-	// If not we'll create one.
-	dir := pluginPath(plugin.Name, plugin.Version)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			return err
-		}
-	}
-	return p.Install(plugin.Version, dir)
-}
-
 // RegisterPlugin registers a plugin.
 func RegisterPlugin(p Plugin) {
 	plugins[p.Name()] = p
+}
+
+func pluginBinaryName(name string) string {
+	bin := fmt.Sprintf("protoc-gen-%s", name)
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
+	return bin
+}
+
+func pluginBinaryPath(cache string, name string, version string) string {
+	return filepath.Join(pluginVersionPath(cache, name, version), "bin", pluginBinaryName(name))
+}
+
+func pluginVersionPath(cache string, name string, version string) string {
+	return filepath.Join(cache, "plugins", name, version)
 }

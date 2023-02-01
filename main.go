@@ -24,10 +24,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
+	"github.com/armortal/protobuffed/cmd/command"
 	"github.com/armortal/protobuffed/cmd/generate"
 	"github.com/armortal/protobuffed/cmd/install"
-	"github.com/armortal/protobuffed/cmd/print"
 	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/plugins/plugingo"
 	"github.com/armortal/protobuffed/plugins/plugingogrpc"
@@ -48,11 +49,17 @@ func main() {
 		},
 	}
 
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("cache", "c", filepath.Join(home, ".protobuffed"), "The directory where binaries will be installed.")
 	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
 
 	cmd.AddCommand(generate.Command())
 	cmd.AddCommand(install.Command())
-	cmd.AddCommand(print.Command())
+	cmd.AddCommand(command.Command())
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)

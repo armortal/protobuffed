@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,10 @@ package core
 
 import "fmt"
 
-func ErrPluginNotSupported(name string) error {
+func errPluginNotSupported(name string) error {
 	return fmt.Errorf("plugin %s not supported", name)
 }
 
-func ErrRuntimeNotSupported(os string, arch string) error {
+func errRuntimeNotSupported(os string, arch string) error {
 	return fmt.Errorf("runtime %s:%s not supported", os, arch)
 }

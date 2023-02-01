@@ -23,8 +23,6 @@
 package install
 
 import (
-	"fmt"
-
 	"github.com/armortal/protobuffed/core"
 	"github.com/spf13/cobra"
 )
@@ -39,30 +37,19 @@ func Command() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			cfg, err := core.ReadConfig(f)
+
+			cache, err := cmd.Flags().GetString("cache")
 			if err != nil {
 				return err
 			}
 
-			return Exec(cfg)
+			config, err := core.ReadConfig(f)
+			if err != nil {
+				return err
+			}
+
+			return core.Install(config, cache)
 		},
 	}
-
 	return cmd
-}
-
-func Exec(c *core.Config) error {
-	// Install protobuf.
-	fmt.Printf("Installing protobuf@%s\n", c.Version)
-	if err := core.InstallProtobuf(c.Version); err != nil {
-		return err
-	}
-
-	for _, plugin := range c.Plugins {
-		fmt.Printf("Installing protoc-gen-%s@%s\n", plugin.Name, plugin.Version)
-		if err := core.InstallPlugin(plugin); err != nil {
-			return err
-		}
-	}
-	return nil
 }

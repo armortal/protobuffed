@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,22 +27,17 @@ import (
 	"os/exec"
 )
 
-func Command(c *Config) (*exec.Cmd, error) {
-	b := getProtobufExecutable(c.Version)
-	cmd := exec.Command(b)
+func Command(config *Config, cache string) (*exec.Cmd, error) {
+	if err := config.validate(); err != nil {
+		return nil, err
+	}
 
-	for _, plugin := range c.Plugins {
-		p, ok := GetPlugin(plugin.Name)
-		if !ok {
-			return nil, ErrPluginNotSupported(plugin.Name)
-		}
+	cmd := exec.Command(protobufBinaryPath(config.Version, cache))
 
-		binary, err := p.Executable(plugin.Version, pluginPath(plugin.Name, plugin.Version))
-		if err != nil {
-			return nil, err
-		}
+	for _, plugin := range config.Plugins {
 
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--plugin=protoc-gen-%s=%s", p.Name(), binary))
+		cmd.Args = append(cmd.Args,
+			fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
 		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
 		if plugin.Options != "" {
 			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
@@ -50,11 +45,11 @@ func Command(c *Config) (*exec.Cmd, error) {
 
 	}
 
-	for _, i := range c.Imports {
+	for _, i := range config.Imports {
 		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
 	}
 
-	cmd.Args = append(cmd.Args, c.Inputs...)
+	cmd.Args = append(cmd.Args, config.Inputs...)
 
 	return cmd, nil
 }

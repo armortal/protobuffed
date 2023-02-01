@@ -24,11 +24,11 @@ package plugingo
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 
-	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/util"
 )
 
@@ -50,20 +50,22 @@ func (p *Plugin) Install(version string, dst string) error {
 		return err
 	}
 
+	bin := filepath.Join(dst, "bin")
+	// Create the bin folder
+	if err := os.MkdirAll(bin, 0700); err != nil {
+		return err
+	}
+
 	if strings.HasSuffix(release, ".zip") {
-		if err := util.ExtractZip(archive, dst); err != nil {
+		if err := util.ExtractZip(archive, bin); err != nil {
 			return err
 		}
 	} else {
-		if err := util.ExtractTarGz(archive, dst); err != nil {
+		if err := util.ExtractTarGz(archive, bin); err != nil {
 			return err
 		}
 	}
 	return nil
-}
-
-func (p *Plugin) Executable(version string, dst string) (string, error) {
-	return filepath.Join(dst, "protoc-gen-go"), nil
 }
 
 func (p *Plugin) Name() string {
@@ -80,7 +82,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "windows.arm64.zip"
 		default:
-			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "linux":
 		switch runtime.GOARCH {
@@ -89,7 +91,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "linux.arm64.tar.gz"
 		default:
-			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "darwin":
 		switch runtime.GOARCH {
@@ -98,11 +100,15 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "darwin.arm64.tar.gz"
 		default:
-			return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	default:
-		return "", core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		return "", errRuntimeNotSupported(version)
 	}
 
 	return fmt.Sprintf("protoc-gen-go.v%s.%s", version, platform), nil
+}
+
+func errRuntimeNotSupported(version string) error {
+	return fmt.Errorf("runtime %s:%s not supported for plugin %s@%s", runtime.GOOS, runtime.GOARCH, "go", version)
 }

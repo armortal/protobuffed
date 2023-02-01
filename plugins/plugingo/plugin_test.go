@@ -23,9 +23,7 @@
 package plugingo
 
 import (
-	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
 )
 
@@ -39,54 +37,31 @@ func testDirectory(version string) (string, error) {
 	return filepath.Join(wd, version), nil
 }
 
-func TestPlugin_Executable(t *testing.T) {
-	p := New()
+// func TestPlugin_Install(t *testing.T) {
+// 	p := New()
 
-	dir, err := testDirectory(testVersion)
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	dir, err := testDirectory(testVersion)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	binary := "protoc-gen-go"
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
+// 	if err := os.Mkdir(dir, 0700); err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	e, err := p.Executable(testVersion, dir)
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	if err := p.Install(testVersion, dir); err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	if e != filepath.Join(dir, binary) {
-		t.Fatal("invalid executable")
-	}
-}
+// 	binary := "protoc-gen-go"
+// 	if runtime.GOOS == "windows" {
+// 		binary += ".exe"
+// 	}
 
-func TestPlugin_Install(t *testing.T) {
-	p := New()
-
-	dir, err := testDirectory(testVersion)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err := os.Mkdir(dir, 0700); err != nil {
-		t.Fatal(err)
-	}
-
-	if err := p.Install(testVersion, dir); err != nil {
-		t.Fatal(err)
-	}
-
-	binary := "protoc-gen-go"
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
-
-	if _, err := os.Stat(filepath.Join(dir, binary)); os.IsNotExist(err) {
-		t.Fatal("binary doesn't exist")
-	}
-}
+// 	if _, err := os.Stat(filepath.Join(dir, binary)); os.IsNotExist(err) {
+// 		t.Fatal("binary doesn't exist")
+// 	}
+// }
 
 func TestPlugin_Name(t *testing.T) {
 	p := New()

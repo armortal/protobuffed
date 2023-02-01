@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
+// Copyright (c) 2023 Armortal Technologies Pty Ltd
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,40 +20,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package command
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+
+	"github.com/armortal/protobuffed/core"
+	"github.com/spf13/cobra"
 )
 
-var STORAGE string
+func Command() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "command",
+		Short: "Print the executable command.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Read in the config.
+			f, err := cmd.Flags().GetString("file")
+			if err != nil {
+				return err
+			}
 
-func init() {
-	if h := os.Getenv("PROTOBUFFED_HOME"); h != "" {
-		STORAGE = h
-	} else {
-		h, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		STORAGE = filepath.Join(h, ".protobuffed")
+			cache, err := cmd.Flags().GetString("cache")
+			if err != nil {
+				return err
+			}
+
+			config, err := core.ReadConfig(f)
+			if err != nil {
+				return err
+			}
+
+			c, err := core.Command(config, cache)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(c.String())
+			return nil
+		},
 	}
-
-	if err := os.MkdirAll(filepath.Join(STORAGE, "plugins"), 0700); err != nil {
-		panic(err)
-	}
-
-	if err := os.MkdirAll(filepath.Join(STORAGE, "protobuf"), 0700); err != nil {
-		panic(err)
-	}
-}
-
-func protobufPath(version string) string {
-	return filepath.Join(STORAGE, "protobuf", version)
-}
-
-func pluginPath(name string, version string) string {
-	return filepath.Join(STORAGE, "plugins", fmt.Sprintf("protoc-gen-%s", name), version)
+	return cmd
 }
