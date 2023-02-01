@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,38 +19,81 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
-	"github.com/armortal/protobuffed/core/errors"
-	"github.com/armortal/protobuffed/core/protobuf"
-	"github.com/armortal/protobuffed/core/storage"
+	"github.com/armortal/protobuffed/util"
 )
 
-func InstallProtobuf(version string) error {
-	if !protobuf.Exists(version, storage.Protobuf()) {
-		if err := protobuf.Install(version, storage.Protobuf()); err != nil {
+// Install will install protobuf and plugins using the given configuration and store it
+// at destination provided.
+func Install(config *Config, cache string) error {
+	// validate the config
+	if err := config.validate(); err != nil {
+		return err
+	}
+
+	cache, err := filepath.Abs(cache)
+	if err != nil {
+		return err
+	}
+
+	// install protobuf
+	pb := protobufVersionPath(cache, config.Version)
+	if _, err := os.Stat(pb); os.IsNotExist(err) {
+		if err := os.MkdirAll(pb, 0700); err != nil {
+			return err
+		}
+		if err := installProtobuf(config.Version, pb); err != nil {
 			return err
 		}
 	}
+
+	// install the plugins
+	for _, p := range config.Plugins {
+		plugin, ok := GetPlugin(p.Name)
+		if !ok {
+			return errPluginNotSupported(p.Name)
+		}
+
+		// create the folder and download the plugin if it doesn't already exist
+		dir := pluginVersionPath(cache, p.Name, p.Version)
+		if _, err := os.Stat(dir); os.IsNotExist(err) {
+			if err := os.MkdirAll(dir, 0700); err != nil {
+				return err
+			}
+
+			if err := plugin.Install(p.Version, dir); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
-// Download the plugin.
-func InstallPlugin(plugin *PluginConfig) error {
-	p, ok := GetPlugin(plugin.Name)
-	if !ok {
-		return errors.ErrPluginNotSupported(plugin.Name)
+// Download and install protobuf for the specific version at the directory provided.
+func installProtobuf(version string, dst string) error {
+	// Get the archive name
+	archiveName, err := protobufArchiveName(version)
+	if err != nil {
+		return err
 	}
-	// First let's check and see if the plugin directory already exists.
-	// If not we'll create one.
-	dir := storage.Plugin(plugin.Name, plugin.Version)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			return err
-		}
+
+	archive := filepath.Join(dst, archiveName)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/v%s/%s", version, archiveName)
+	if err := util.Download(url, archive); err != nil {
+		return err
 	}
-	return p.Install(plugin.Version, dir)
+
+	if err := util.ExtractZip(archive, dst); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +19,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
 
-func TestInstallProtobuf(t *testing.T) {}
+func Test_installProtobuf(t *testing.T) {
+	dir, err := os.MkdirTemp(".", "test*")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-func TestInstallPlugin(t *testing.T) {}
+	if err := installProtobuf("21.12", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", protobufBinaryName())); os.IsNotExist(err) {
+		t.Fatal("protobuf binary doesn't exist")
+	}
+}

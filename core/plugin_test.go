@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +19,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestPluginCache(t *testing.T) {
+// testPlugin used for testing purposes only so we can register this with the core.
+type testPlugin struct{}
 
+func (p *testPlugin) Name() string {
+	return "testplugin"
+}
+
+func (p *testPlugin) Install(version string, dir string) error {
+	return nil
+}
+
+func TestPlugins(t *testing.T) {
+	p := &testPlugin{}
+
+	if _, ok := GetPlugin(p.Name()); ok {
+		t.Fatal("plugin should not exist")
+	}
+
+	RegisterPlugin(p)
+
+	v, ok := GetPlugin(p.Name())
+	if !ok {
+		t.Fatal("plugin should exist")
+	}
+
+	if v != p {
+		t.Fatal("plugin mismatch")
+	}
 }

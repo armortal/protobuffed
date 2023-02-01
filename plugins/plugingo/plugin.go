@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,15 +19,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package plugingo
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 
-	"github.com/armortal/protobuffed/core/errors"
 	"github.com/armortal/protobuffed/util"
 )
 
@@ -42,30 +43,28 @@ func (p *Plugin) Install(version string, dst string) error {
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/%s/%s", version, release)
+	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/v%s/%s", version, release)
 
 	archive := filepath.Join(dst, release)
 	if err := util.Download(url, archive); err != nil {
 		return err
 	}
 
+	bin := filepath.Join(dst, "bin")
+	// Create the bin folder
+	if err := os.MkdirAll(bin, 0700); err != nil {
+		return err
+	}
+
 	if strings.HasSuffix(release, ".zip") {
-		if err := util.ExtractZip(archive, dst); err != nil {
+		if err := util.ExtractZip(archive, bin); err != nil {
 			return err
 		}
 	} else {
-		if err := util.ExtractTarGz(archive, dst); err != nil {
+		if err := util.ExtractTarGz(archive, bin); err != nil {
 			return err
 		}
 	}
-	return nil
-}
-
-func (p *Plugin) Executable(version string, dst string) (string, error) {
-	return filepath.Join(dst, "protoc-gen-go"), nil
-}
-
-func (p *Plugin) Extract(version string, dst string) error {
 	return nil
 }
 
@@ -83,7 +82,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "windows.arm64.zip"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "linux":
 		switch runtime.GOARCH {
@@ -92,7 +91,7 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "linux.arm64.tar.gz"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "darwin":
 		switch runtime.GOARCH {
@@ -101,11 +100,15 @@ func release(version string) (string, error) {
 		case "arm64":
 			platform = "darwin.arm64.tar.gz"
 		default:
-			return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+			return "", errRuntimeNotSupported(version)
 		}
 	default:
-		return "", errors.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		return "", errRuntimeNotSupported(version)
 	}
 
-	return fmt.Sprintf("protoc-gen-go.%s.%s", version, platform), nil
+	return fmt.Sprintf("protoc-gen-go.v%s.%s", version, platform), nil
+}
+
+func errRuntimeNotSupported(version string) error {
+	return fmt.Errorf("runtime %s:%s not supported for plugin %s@%s", runtime.GOOS, runtime.GOARCH, "go", version)
 }

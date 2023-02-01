@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,51 +19,45 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-package storage
+
+package command
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+
+	"github.com/armortal/protobuffed/core"
+	"github.com/spf13/cobra"
 )
 
-var home string
+func Command() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "command",
+		Short: "Print the executable command.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Read in the config.
+			f, err := cmd.Flags().GetString("file")
+			if err != nil {
+				return err
+			}
 
-func init() {
-	if h := os.Getenv("PROTOBUFFED_HOME"); h != "" {
-		home = h
-	} else {
-		h, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		home = filepath.Join(h, ".protobuffed")
+			cache, err := cmd.Flags().GetString("cache")
+			if err != nil {
+				return err
+			}
+
+			config, err := core.ReadConfig(f)
+			if err != nil {
+				return err
+			}
+
+			c, err := core.Command(config, cache)
+			if err != nil {
+				return err
+			}
+
+			fmt.Println(c.String())
+			return nil
+		},
 	}
-
-	if err := create(); err != nil {
-		panic(err)
-	}
-}
-
-func create() error {
-	if err := os.MkdirAll(filepath.Join(home, "plugins"), 0700); err != nil {
-		return err
-	}
-
-	if err := os.MkdirAll(filepath.Join(home, "protobuf"), 0700); err != nil {
-		return err
-	}
-	return nil
-}
-
-func Protobuf() string {
-	return filepath.Join(home, "protobuf")
-}
-
-func Plugins() string {
-	return filepath.Join(home, "plugins")
-}
-
-func Plugin(name string, version string) string {
-	return filepath.Join(Plugins(), fmt.Sprintf("protoc-gen-%s", name), version)
+	return cmd
 }

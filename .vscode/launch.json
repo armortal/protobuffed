@@ -5,14 +5,24 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Launch Package",
+			"name": "generate",
 			"type": "go",
 			"request": "launch",
 			"mode": "auto",
 			"program": "${workspaceFolder}",
 			"args": [
-				"generate", "-f", "test/protobuffed.json"
+				"generate", "-f", "testing/protobuffed.json", "-c", "testing/"
 			]
-		}
+		},
+		{
+			"name": "install",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${workspaceFolder}",
+			"args": [
+				"install", "-f", "testing/protobuffed.json", "-c", "testing/"
+			]
+		},
 	]
 }

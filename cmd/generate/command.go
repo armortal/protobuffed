@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,13 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package generate
 
 import (
-	"bufio"
-	"fmt"
-
-	"github.com/armortal/protobuffed/cmd/install"
 	"github.com/armortal/protobuffed/core"
 	"github.com/spf13/cobra"
 )
@@ -33,67 +30,27 @@ import (
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "generate",
-		Short: "Generate source code",
+		Short: "Generate source code.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read in the config.
 			f, err := cmd.Flags().GetString("file")
 			if err != nil {
 				return err
 			}
-			cfg, err := core.ReadConfig(f)
+
+			cache, err := cmd.Flags().GetString("cache")
 			if err != nil {
 				return err
 			}
 
-			// Call the install command
-			if err := install.Exec(cfg); err != nil {
+			config, err := core.ReadConfig(f)
+			if err != nil {
 				return err
 			}
 
-			return Exec(cfg)
+			return core.Generate(config, cache)
 		},
 	}
 
 	return cmd
-}
-
-func Exec(c *core.Config) error {
-	cmd, err := core.Command(c)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Generating...")
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
-
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		return err
-	}
-
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-	outScanner := bufio.NewScanner(stdout)
-	go func() {
-		for outScanner.Scan() {
-			fmt.Printf("%s\n", outScanner.Text())
-		}
-	}()
-
-	errScanner := bufio.NewScanner(stderr)
-	go func() {
-		for errScanner.Scan() {
-			fmt.Printf("%s\n", errScanner.Text())
-		}
-	}()
-
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-	fmt.Println("Done")
-	return nil
 }

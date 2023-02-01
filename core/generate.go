@@ -23,33 +23,52 @@
 package core
 
 import (
+	"bufio"
 	"fmt"
-	"os/exec"
 )
 
-func Command(config *Config, cache string) (*exec.Cmd, error) {
-	if err := config.validate(); err != nil {
-		return nil, err
+// Generate will generate the source code using the given configuration file.
+// Calling this function will assume the binaries have been installed.
+// If an error occurs, it will be returned.
+func Generate(config *Config, cache string) error {
+	// We'll install binaries if they haven't been installed already
+	if err := Install(config, cache); err != nil {
+		return err
 	}
 
-	cmd := exec.Command(protobufBinaryPath(cache, config.Version))
+	cmd, err := Command(config, cache)
+	if err != nil {
+		return err
+	}
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
 
-	for _, plugin := range config.Plugins {
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
 
-		cmd.Args = append(cmd.Args,
-			fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-		if plugin.Options != "" {
-			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	outScanner := bufio.NewScanner(stdout)
+	go func() {
+		for outScanner.Scan() {
+			fmt.Printf("%s\n", outScanner.Text())
 		}
+	}()
 
+	errScanner := bufio.NewScanner(stderr)
+	go func() {
+		for errScanner.Scan() {
+			fmt.Printf("%s\n", errScanner.Text())
+		}
+	}()
+
+	if err := cmd.Wait(); err != nil {
+		return err
 	}
-
-	for _, i := range config.Imports {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
-	}
-
-	cmd.Args = append(cmd.Args, config.Inputs...)
-
-	return cmd, nil
+	return nil
 }

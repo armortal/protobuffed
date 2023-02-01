@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,38 +19,55 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-package print
+
+package plugingo
 
 import (
-	"fmt"
-
-	"github.com/armortal/protobuffed/core"
-	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
+	"runtime"
+	"testing"
 )
 
-func Command() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "print",
-		Short: "Print the executable command.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// Read in the config.
-			f, err := cmd.Flags().GetString("file")
-			if err != nil {
-				return err
-			}
-			cfg, err := core.ReadConfig(f)
-			if err != nil {
-				return err
-			}
+const testVersion = "1.28.1"
 
-			c, err := core.Command(cfg)
-			if err != nil {
-				return err
-			}
-
-			fmt.Println(c.String())
-			return nil
-		},
+func testDirectory(version string) (string, error) {
+	wd, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
 	}
-	return cmd
+	return filepath.Join(wd, version), nil
+}
+
+func TestPlugin_Install(t *testing.T) {
+	p := New()
+
+	dir, err := testDirectory(testVersion)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Mkdir(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := p.Install(testVersion, dir); err != nil {
+		t.Fatal(err)
+	}
+
+	binary := "protoc-gen-go"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
+		t.Fatal("binary doesn't exist")
+	}
+}
+
+func TestPlugin_Name(t *testing.T) {
+	p := New()
+	if p.Name() != "go" {
+		t.Fatal()
+	}
 }

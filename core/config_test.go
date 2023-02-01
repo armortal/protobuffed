@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +19,38 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestRead(t *testing.T) {}
+func TestConfig_validate(t *testing.T) {
+	config := &Config{
+		Version: "21.12",
+		Plugins: []*PluginConfig{
+			{
+				Name:    "testplugin",
+				Version: "1.0.0",
+				Options: "",
+				Output:  "test",
+			},
+		},
+	}
+
+	if config.validate() != nil {
+		t.Fatal()
+	}
+
+	config.Version = ""
+
+	if config.validate() == nil {
+		t.Fatal()
+	}
+
+	config.Version = "21.12"
+	config.Plugins[0].Version = ""
+
+	if config.validate() == nil {
+		t.Fatal()
+	}
+}

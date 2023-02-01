@@ -24,32 +24,50 @@ package core
 
 import (
 	"fmt"
-	"os/exec"
+	"path/filepath"
+	"runtime"
 )
 
-func Command(config *Config, cache string) (*exec.Cmd, error) {
-	if err := config.validate(); err != nil {
-		return nil, err
+func protobufVersionPath(cache string, version string) string {
+	return filepath.Join(cache, "protobuf", version)
+}
+
+func protobufBinaryName() string {
+	f := "protoc"
+	if runtime.GOOS == "windows" {
+		f += ".exe"
 	}
+	return f
+}
+func protobufBinaryPath(cache string, version string) string {
+	return filepath.Join(protobufVersionPath(cache, version), "bin", protobufBinaryName())
+}
 
-	cmd := exec.Command(protobufBinaryPath(cache, config.Version))
-
-	for _, plugin := range config.Plugins {
-
-		cmd.Args = append(cmd.Args,
-			fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-		if plugin.Options != "" {
-			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
+func protobufArchiveName(version string) (string, error) {
+	// Get the base filename.
+	var platform string
+	switch runtime.GOOS {
+	case "windows":
+		switch runtime.GOARCH {
+		case "amd64":
+			platform = "win64"
+		default:
+			return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 		}
-
+	case "linux":
+		switch runtime.GOARCH {
+		case "amd64":
+			platform = "linux-x86_64"
+		case "arm64":
+			platform = "linux-aarch_64"
+		default:
+			return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
+		}
+	case "darwin":
+		platform = "osx-universal_binary"
+	default:
+		return "", errRuntimeNotSupported(runtime.GOOS, runtime.GOARCH)
 	}
 
-	for _, i := range config.Imports {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
-	}
-
-	cmd.Args = append(cmd.Args, config.Inputs...)
-
-	return cmd, nil
+	return fmt.Sprintf("protoc-%s-%s.zip", version, platform), nil
 }

@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package plugingogrpc
 
 import (
@@ -26,7 +27,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
+	"runtime"
 
 	"github.com/armortal/protobuffed/util"
 )
@@ -50,14 +51,14 @@ func (p *Plugin) Exists(version string, dir string) bool {
 	return true
 }
 
-func (p *Plugin) Executable(version string, dir string) (string, error) {
-	return filepath.Join(dir, "bin", "protoc-gen-go-grpc"), nil
-}
-
 func (p *Plugin) Install(version string, dst string) error {
 	// grpc-go don't provide the built binaries, we must download the source and we can run it directly.
 	archive := filepath.Join(dst, fmt.Sprintf("%s.zip", release(version)))
 	bin := filepath.Join(dst, "bin")
+	binAbs, err := filepath.Abs(bin)
+	if err != nil {
+		return err
+	}
 
 	// Check existence of binary and remove all directories if it doesn't exist.
 	if !p.Exists(version, dst) {
@@ -70,7 +71,7 @@ func (p *Plugin) Install(version string, dst string) error {
 		}
 
 		// Download the repo.
-		if err := util.Download(fmt.Sprintf("https://github.com/grpc/grpc-go/archive/refs/tags/%s.zip", version), archive); err != nil {
+		if err := util.Download(fmt.Sprintf("https://github.com/grpc/grpc-go/archive/refs/tags/v%s.zip", version), archive); err != nil {
 			return err
 		}
 
@@ -78,19 +79,20 @@ func (p *Plugin) Install(version string, dst string) error {
 			return err
 		}
 
-		cmd := exec.Command("go", "build", "-o", filepath.Join(bin, "protoc-gen-go-grpc"), ".")
+		output := filepath.Join(binAbs, "protoc-gen-go-grpc")
+		if runtime.GOOS == "windows" {
+			output += ".exe"
+		}
+
+		cmd := exec.Command("go", "build", "-o", output, ".")
 		// We join the filename twice because archives from git creates the same subfolder with its contents
 		// The unzipped contents don't have the v prefix
-		cmd.Dir = filepath.Join(dst, release(strings.Split(version, "v")[1]), "cmd", "protoc-gen-go-grpc")
+		cmd.Dir = filepath.Join(dst, release(version), "cmd", "protoc-gen-go-grpc")
 		if err := cmd.Run(); err != nil {
 			return err
 		}
 
-		ex, err := p.Executable(version, dst)
-		if err != nil {
-			return err
-		}
-		if err := os.Chmod(ex, 0700); err != nil {
+		if err := os.Chmod(output, 0700); err != nil {
 			return err
 		}
 	}

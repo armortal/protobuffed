@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,11 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package install
 
 import (
-	"fmt"
-
 	"github.com/armortal/protobuffed/core"
 	"github.com/spf13/cobra"
 )
@@ -38,30 +37,19 @@ func Command() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			cfg, err := core.ReadConfig(f)
+
+			cache, err := cmd.Flags().GetString("cache")
 			if err != nil {
 				return err
 			}
 
-			return Exec(cfg)
+			config, err := core.ReadConfig(f)
+			if err != nil {
+				return err
+			}
+
+			return core.Install(config, cache)
 		},
 	}
-
 	return cmd
-}
-
-func Exec(c *core.Config) error {
-	// Install protobuf.
-	fmt.Printf("Installing protobuf@%s\n", c.Version)
-	if err := core.InstallProtobuf(c.Version); err != nil {
-		return err
-	}
-
-	for _, plugin := range c.Plugins {
-		fmt.Printf("Installing protoc-gen-%s@%s\n", plugin.Name, plugin.Version)
-		if err := core.InstallPlugin(plugin); err != nil {
-			return err
-		}
-	}
-	return nil
 }

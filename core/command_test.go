@@ -1,6 +1,6 @@
 // MIT License
 
-// Copyright (c) 2023 Armortal Technologies Pty Ltd
+// Copyright (c) 2023 ARMORTAL TECHNOLOGIES PTY LTD
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,8 +19,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 package core
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
-func TestCommand(t *testing.T) {}
+func TestCommand(t *testing.T) {
+	config := &Config{
+		Version: "21.12",
+		Imports: []string{"test"},
+		Inputs:  []string{"test.proto"},
+		Plugins: []*PluginConfig{
+			{
+				Name:    "testplugin",
+				Version: "1.0.0",
+				Options: "paths=source_relative",
+				Output:  "test",
+			},
+		},
+	}
+
+	// register the test plugin
+	RegisterPlugin(&testPlugin{})
+
+	act, err := Command(config, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	exp := fmt.Sprintf("test/protobuf/21.12/bin/%s --plugin=protoc-gen-testplugin=test/plugins/testplugin/1.0.0/bin/%s --testplugin_out=test --testplugin_opt=paths=source_relative --proto_path=test test.proto", protobufBinaryName(), pluginBinaryName("testplugin"))
+
+	if act.String() != exp {
+		t.Fatal()
+	}
+}

@@ -20,36 +20,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package plugingogrpc
 
 import (
-	"fmt"
-	"os/exec"
+	"os"
+	"path/filepath"
+	"runtime"
+	"testing"
 )
 
-func Command(config *Config, cache string) (*exec.Cmd, error) {
-	if err := config.validate(); err != nil {
-		return nil, err
+const testVersion = "1.52.3"
+
+func testDirectory(version string) (string, error) {
+	wd, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(wd, version), nil
+}
+
+func TestPlugin_Install(t *testing.T) {
+	p := New()
+
+	// Use current directory as path
+	dir, err := testDirectory(testVersion)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	cmd := exec.Command(protobufBinaryPath(cache, config.Version))
-
-	for _, plugin := range config.Plugins {
-
-		cmd.Args = append(cmd.Args,
-			fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-		if plugin.Options != "" {
-			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
-		}
-
+	if err := os.Mkdir(dir, 0700); err != nil {
+		t.Fatal(err)
 	}
 
-	for _, i := range config.Imports {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
+	if err := p.Install(testVersion, dir); err != nil {
+		t.Fatal(err)
 	}
 
-	cmd.Args = append(cmd.Args, config.Inputs...)
+	binary := "protoc-gen-go-grpc"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
 
-	return cmd, nil
+	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
+		t.Fatal("exectuable doesn't exist")
+	}
+}
+
+func TestPlugin_Name(t *testing.T) {
+	p := New()
+	if p.Name() != "go-grpc" {
+		t.Fatal()
+	}
 }
