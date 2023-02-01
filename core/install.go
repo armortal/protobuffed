@@ -58,7 +58,7 @@ func Install(config *Config, cache string) error {
 	for _, p := range config.Plugins {
 		plugin, ok := GetPlugin(p.Name)
 		if !ok {
-			return errPluginNotSupported(p.Name)
+			return ErrPluginNotSupported(p.Name)
 		}
 
 		// create the folder and download the plugin if it doesn't already exist

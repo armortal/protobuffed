@@ -20,54 +20,90 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package plugingrpcweb
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
+
+	"github.com/armortal/protobuffed/core"
+	"github.com/armortal/protobuffed/util"
 )
 
-func protobufVersionPath(cache string, version string) string {
-	return filepath.Join(cache, "protobuf", version)
+type Plugin struct{}
+
+func New() *Plugin {
+	return &Plugin{}
 }
 
-func protobufBinaryName() string {
-	f := "protoc"
-	if runtime.GOOS == "windows" {
-		f += ".exe"
+func (p *Plugin) Install(version string, dst string) error {
+	release, err := release(version)
+	if err != nil {
+		return err
 	}
-	return f
-}
-func protobufBinaryPath(cache string, version string) string {
-	return filepath.Join(protobufVersionPath(cache, version), "bin", protobufBinaryName())
+	url := fmt.Sprintf("https://github.com/grpc/grpc-web/releases/download/%s/%s", version, release)
+	fmt.Println(url)
+	bin := filepath.Join(dst, "bin")
+	// Create the bin folder
+	if err := os.MkdirAll(bin, 0700); err != nil {
+		return err
+	}
+
+	output := filepath.Join(bin, "protoc-gen-grpc-web")
+	if runtime.GOOS == "windows" {
+		output += ".exe"
+	}
+
+	if err := util.Download(url, output); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func protobufArchiveName(version string) (string, error) {
-	// Get the base filename.
+func (p *Plugin) Name() string {
+	return "grpc-web"
+}
+
+func release(version string) (string, error) {
 	var platform string
 	switch runtime.GOOS {
 	case "windows":
 		switch runtime.GOARCH {
 		case "amd64":
-			platform = "win64"
+			platform = "windows-x86_64.exe"
+		case "arm64":
+			platform = "windows-aarch64.exe"
 		default:
-			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "linux":
 		switch runtime.GOARCH {
 		case "amd64":
 			platform = "linux-x86_64"
 		case "arm64":
-			platform = "linux-aarch_64"
+			platform = "linux-aarch64"
 		default:
-			return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
+			return "", errRuntimeNotSupported(version)
 		}
 	case "darwin":
-		platform = "osx-universal_binary"
+		switch runtime.GOARCH {
+		case "amd64":
+			platform = "darwin-x86_64"
+		case "arm64":
+			platform = "darwin-aarch64"
+		default:
+			return "", errRuntimeNotSupported(version)
+		}
 	default:
-		return "", ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "protobuf", version)
+		return "", errRuntimeNotSupported(version)
 	}
 
-	return fmt.Sprintf("protoc-%s-%s.zip", version, platform), nil
+	return fmt.Sprintf("protoc-gen-grpc-web-%s-%s", version, platform), nil
+}
+
+func errRuntimeNotSupported(version string) error {
+	return core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "go", version)
 }

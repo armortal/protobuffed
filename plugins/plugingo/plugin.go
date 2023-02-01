@@ -29,6 +29,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/util"
 )
 
@@ -110,5 +111,5 @@ func release(version string) (string, error) {
 }
 
 func errRuntimeNotSupported(version string) error {
-	return fmt.Errorf("runtime %s:%s not supported for plugin %s@%s", runtime.GOOS, runtime.GOARCH, "go", version)
+	return core.ErrRuntimeNotSupported(runtime.GOOS, runtime.GOARCH, "go", version)
 }

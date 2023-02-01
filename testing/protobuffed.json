@@ -1,7 +1,7 @@
 {
 	"version" : "21.12",
 	"imports" : [
-		"test"
+		"testing"
 	],
 	"inputs" : [
 		"test.proto"
@@ -11,13 +11,19 @@
 			"name" : "go",
 			"version" : "1.28.1",
 			"options" : "paths=source_relative",
-			"output" : "test"
+			"output" : "testing"
 		},
 		{
 			"name" : "go-grpc",
 			"version" : "1.52.0",
 			"options" : "paths=source_relative",
-			"output" : "test"
+			"output" : "testing"
+		},
+		{
+			"name" : "grpc-web",
+			"version" : "1.4.2",
+			"options" : "import_style=commonjs+dts,mode=grpcwebtext",
+			"output" : "testing"
 		}
 	]
 }

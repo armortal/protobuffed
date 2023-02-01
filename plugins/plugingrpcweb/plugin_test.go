@@ -20,14 +20,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package plugingrpcweb
 
-import "fmt"
+import (
+	"os"
+	"path/filepath"
+	"runtime"
+	"testing"
+)
 
-func ErrPluginNotSupported(name string) error {
-	return fmt.Errorf("plugin %s not supported", name)
+const testVersion = "1.4.2"
+
+func testDirectory(version string) (string, error) {
+	wd, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(wd, version), nil
 }
 
-func ErrRuntimeNotSupported(os string, arch string, name string, version string) error {
-	return fmt.Errorf("runtime %s:%s not supported for %s@%s", os, arch, name, version)
+func TestPlugin_Install(t *testing.T) {
+	p := New()
+
+	dir, err := testDirectory(testVersion)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Mkdir(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := p.Install(testVersion, dir); err != nil {
+		t.Fatal(err)
+	}
+
+	binary := "protoc-gen-grpc-web"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
+		t.Fatal("binary doesn't exist")
+	}
+}
+
+func TestPlugin_Name(t *testing.T) {
+	p := New()
+	if p.Name() != "grpc-web" {
+		t.Fatal()
+	}
 }

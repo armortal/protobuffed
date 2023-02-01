@@ -25,20 +25,21 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
-	"github.com/armortal/protobuffed/cmd/command"
 	"github.com/armortal/protobuffed/cmd/generate"
 	"github.com/armortal/protobuffed/cmd/install"
+	"github.com/armortal/protobuffed/cmd/print"
 	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/plugins/plugingo"
 	"github.com/armortal/protobuffed/plugins/plugingogrpc"
+	"github.com/armortal/protobuffed/plugins/plugingrpcweb"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	core.RegisterPlugin(plugingo.New())
 	core.RegisterPlugin(plugingogrpc.New())
+	core.RegisterPlugin(plugingrpcweb.New())
 }
 
 func main() {
@@ -47,17 +48,12 @@ func main() {
 		Short: "Protocol buffers buffed up. Making it easier to work with protobuf files and binaries",
 	}
 
-	home, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("cache", "c", filepath.Join(home, ".protobuffed"), "The directory where binaries will be installed and executed from.")
+	cmd.PersistentFlags().StringP("cache", "c", ".protobuffed", "The directory where binaries will be installed and executed from.")
 	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
 
 	cmd.AddCommand(generate.Command())
 	cmd.AddCommand(install.Command())
-	cmd.AddCommand(command.Command())
+	cmd.AddCommand(print.Command())
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
