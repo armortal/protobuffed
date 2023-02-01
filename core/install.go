@@ -38,6 +38,11 @@ func Install(config *Config, cache string) error {
 		return err
 	}
 
+	cache, err := filepath.Abs(cache)
+	if err != nil {
+		return err
+	}
+
 	// install protobuf
 	pb := protobufVersionPath(cache, config.Version)
 	if _, err := os.Stat(pb); os.IsNotExist(err) {

@@ -63,7 +63,7 @@ func (c *Config) validate() error {
 	}
 
 	for _, p := range c.Plugins {
-		if c.Version == "" {
+		if p.Version == "" {
 			return fmt.Errorf("config: %s plugin version not provided", p.Name)
 		}
 	}

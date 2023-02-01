@@ -22,34 +22,35 @@
 
 package core
 
-import (
-	"fmt"
-	"os/exec"
-)
+import "testing"
 
-func Command(config *Config, cache string) (*exec.Cmd, error) {
-	if err := config.validate(); err != nil {
-		return nil, err
+func TestConfig_validate(t *testing.T) {
+	config := &Config{
+		Version: "21.12",
+		Plugins: []*PluginConfig{
+			{
+				Name:    "testplugin",
+				Version: "1.0.0",
+				Options: "",
+				Output:  "test",
+			},
+		},
 	}
 
-	cmd := exec.Command(protobufBinaryPath(cache, config.Version))
-
-	for _, plugin := range config.Plugins {
-
-		cmd.Args = append(cmd.Args,
-			fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-		if plugin.Options != "" {
-			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
-		}
-
+	if config.validate() != nil {
+		t.Fatal()
 	}
 
-	for _, i := range config.Imports {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
+	config.Version = ""
+
+	if config.validate() == nil {
+		t.Fatal()
 	}
 
-	cmd.Args = append(cmd.Args, config.Inputs...)
+	config.Version = "21.12"
+	config.Plugins[0].Version = ""
 
-	return cmd, nil
+	if config.validate() == nil {
+		t.Fatal()
+	}
 }

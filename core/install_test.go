@@ -21,3 +21,28 @@
 // SOFTWARE.
 
 package core
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func Test_installProtobuf(t *testing.T) {
+	dir, err := filepath.Abs("test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := os.Mkdir(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := installProtobuf("21.12", dir); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", protobufBinaryName())); os.IsNotExist(err) {
+		t.Fatal("protobuf binary doesn't exist")
+	}
+}

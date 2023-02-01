@@ -29,10 +29,6 @@ import (
 // testPlugin used for testing purposes only so we can register this with the core.
 type testPlugin struct{}
 
-func (p *testPlugin) Executable(version string, dir string) (string, error) {
-	return "testplugin", nil
-}
-
 func (p *testPlugin) Name() string {
 	return "testplugin"
 }

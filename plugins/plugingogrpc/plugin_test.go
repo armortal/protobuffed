@@ -39,29 +39,6 @@ func testDirectory(version string) (string, error) {
 	return filepath.Join(wd, version), nil
 }
 
-func TestPlugin_Executable(t *testing.T) {
-	p := New()
-	// Use current directory as path
-	dir, err := testDirectory(testVersion)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	e, err := p.Executable(testVersion, dir)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	binary := "protoc-gen-go-grpc"
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
-
-	if e != filepath.Join(dir, "bin", binary) {
-		t.Fatal("invalid executable")
-	}
-}
-
 func TestPlugin_Install(t *testing.T) {
 	p := New()
 
