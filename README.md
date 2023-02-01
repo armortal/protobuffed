@@ -4,7 +4,7 @@ Protocol buffers buffed up :muscle: Making it easier to work with protobuf files
 
 This project was originally developed to ease the burden when setting up projects that utilize protocol buffers. It can be time consuming and frustrating for developers to set up projects with the correct binaries and plugins, and keep up to date with new versions without having to constantly download and reinstall them.
 
-**protobuffed** uses a single configuration file that resides each project repository. The only requirement is for all developers to have this binary installed and everything else is handled seamlessly.
+`protobuffed` uses a single configuration file that resides each project repository. The only requirement is for all developers to have this binary installed and everything else is handled seamlessly.
 
 ## Contents
 
