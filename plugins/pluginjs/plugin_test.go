@@ -20,45 +20,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package main
+package pluginjs
 
 import (
-	"fmt"
 	"os"
-
-	"github.com/armortal/protobuffed/cmd/generate"
-	"github.com/armortal/protobuffed/cmd/install"
-	"github.com/armortal/protobuffed/cmd/print"
-	"github.com/armortal/protobuffed/core"
-	"github.com/armortal/protobuffed/plugins/plugingo"
-	"github.com/armortal/protobuffed/plugins/plugingogrpc"
-	"github.com/armortal/protobuffed/plugins/plugingrpcweb"
-	"github.com/armortal/protobuffed/plugins/pluginjs"
-	"github.com/spf13/cobra"
+	"path/filepath"
+	"runtime"
+	"testing"
 )
 
-func init() {
-	core.RegisterPlugin(plugingo.New())
-	core.RegisterPlugin(plugingogrpc.New())
-	core.RegisterPlugin(plugingrpcweb.New())
-	core.RegisterPlugin(pluginjs.New())
+const testVersion = "3.21.2"
+
+func testDirectory(version string) (string, error) {
+	wd, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(wd, version), nil
 }
 
-func main() {
-	cmd := &cobra.Command{
-		Use:   "protobuffed",
-		Short: "Protocol buffers buffed up. Making it easier to work with protobuf files and binaries",
+func TestPlugin_Install(t *testing.T) {
+	p := New()
+
+	dir, err := testDirectory(testVersion)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	cmd.PersistentFlags().StringP("cache", "c", ".protobuffed", "The directory where binaries will be installed and executed from.")
-	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
+	if err := os.Mkdir(dir, 0700); err != nil {
+		t.Fatal(err)
+	}
 
-	cmd.AddCommand(generate.Command())
-	cmd.AddCommand(install.Command())
-	cmd.AddCommand(print.Command())
+	if err := p.Install(testVersion, dir); err != nil {
+		t.Fatal(err)
+	}
 
-	if err := cmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	binary := "protoc-gen-js"
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+
+	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
+		t.Fatal("binary doesn't exist")
+	}
+}
+
+func TestPlugin_Name(t *testing.T) {
+	p := New()
+	if p.Name() != "js" {
+		t.Fatal()
 	}
 }
