@@ -6,6 +6,8 @@ This project was originally developed to ease the burden when setting up project
 
 `protobuffed` uses a single configuration file that resides each project repository. The only requirement is for all developers to have this binary installed and everything else is handled seamlessly.
 
+> :warning: This project is currently in beta and we may make a changes (potentially breaking) as we gather feedback from early adopters until we get to the first stable major version 1.0.0
+
 ## Contents
 
 - [Getting Started](#getting-started)
