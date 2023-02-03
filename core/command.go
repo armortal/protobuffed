@@ -32,7 +32,7 @@ func Command(config *Config, cache string) (*exec.Cmd, error) {
 		return nil, err
 	}
 
-	cmd := exec.Command(protobufBinaryPath(cache, config.Version))
+	cmd := exec.Command(protobufBinaryPath(cache, config.Protobuf.Version))
 
 	for _, plugin := range config.Plugins {
 
