@@ -38,13 +38,30 @@ Protobuffed uses a [configuration](#configuration) file that describes the proje
 ```json
 {
     "protobuf": {
-        "version": "latest"
+        "version": "21.12"
     },
     "imports": [],
     "inputs": [],
     "plugins": []
 }
 ```
+
+### Installing protobuf
+
+With the standard configuration, running `protobuffed install` will only install protobuf. When you run this, a [cache](#cache) folder named `.protobuffed` will be created which all binaries will be installed at. You can change this default location by specifying the `-c` or `--cache` flag. After running `install`, your project should now look like:
+
+```
+|--- .protobuffed
+|    |--- protobuf/
+|    |    |--- 21.12/
+|    |
+|    .protobuffed.json
+
+```
+
+### Adding proto files
+
+Once you have defined your project's `.proto` files, we now need to add them as inputs. The `inputs` field is where you will add these. For a `.proto` file located at `api/helloworld.proto`,
 
 ## Configuration
 
