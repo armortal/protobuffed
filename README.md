@@ -3,7 +3,7 @@
 Protocol buffers buffed up :muscle: A lightweight tool for managing your protobuf projects.
 
 Protobuffed was originally developed to ease the workload on developers when working with projects that utilize protocol buffers.
-The process involved in setting up protobuf and plugin binaries can be overwhelming and time consuming particularly when working in teams and ensuring each developer has the same protobuf setup. Protobuffed aims to solve this issue by using a single configuration file that sits in your project's repository and does the heavy lifting so that developers don't need to.
+The process involved in setting up protobuf and plugin binaries can be overwhelming and time consuming particularly when working in teams and ensuring each developer has the same protobuf setup. Protobuffed aims to solve this issue by using a single configuration file that sits in your project's repository and does the heavy lifting so that developers don't have to.
 
 > :warning: This project is currently in active development and we may make changes (potentially breaking) as we gather feedback from early adopters until we get to the first major release.
 
@@ -30,7 +30,9 @@ Install with `go`:
 | :--- | :--------- |
 | **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
 | **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
-| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web)
+| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
+| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
+
 ## Getting Started
 
 ### Commands
