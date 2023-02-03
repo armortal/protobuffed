@@ -10,10 +10,13 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 ## Contents
 
 - [Installation](#installation)
-- [Plugins](#plugins)
-- [Getting Started](#getting-started)	
-	- [Commands](#commands)
 - [Configuration](#configuration)
+- [Plugins](#plugins)
+- [Commands](#commands)
+	- [init](#init)
+	- [print](#print)
+	- [install](#install)
+	- [generate](#generate)
 - [Cache](#cache)
 - [Contributing](#contributing)
 
@@ -23,52 +26,9 @@ Install with `go`:
 
 `go install github.com/armortal/protobuffed@latest`
 
-
-## Plugins
-
-| Name | Source |
-| :--- | :--------- |
-| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
-| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
-| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
-| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
-
-## Getting Started
-
-### Commands
-
-Once installed, you can view all available commands and flags with `protobuffed --help`.
-
-```
-Protocol buffers buffed up. Making it easier to work with protobuf files and binaries
-
-Usage:
-  protobuffed [command]
-
-Available Commands:
-  command     Print the executable command.
-  completion  Generate the autocompletion script for the specified shell
-  generate    Generate source code.
-  help        Help about any command
-  install     Install binaries
-
-Flags:
-  -c, --cache string   The directory where binaries will be installed and executed from. (default "$HOME/.protobuffed")
-  -f, --file string    The configuration file (default "protobuffed.json")
-  -h, --help           help for protobuffed
-
-Use "protobuffed [command] --help" for more information about a command.
-```
-
-To install binaries and generate source code, run `protobuffed generate -f protobuffed.json`.
-
-To print the command which can be executed manually, run `protobuffed command -f protobuffed.json`.
-
-If you would like to only install the binaries (no source code generated), run `protobuffed install -f protobuffed.json`.
-
 ## Configuration
 
-A single configuration file (default is `protobuffed.json`) should reside in the repository where you will be generating your code and should be committed to Git. This configuration file is used as input to `protobuffed` to determine the versions of the binaries to install and execute. The following is an example of what a configuration file looks like:
+Protobuffed uses a single configuration file (default is `protobuffed.json`) to determine the versions of the binaries to install and execute. The following is an example of what a configuration file looks like:
 
 ```json
 {
@@ -117,6 +77,56 @@ A single configuration file (default is `protobuffed.json`) should reside in the
 | `version` | **string** | The plugin version. |
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |
+
+## Plugins
+
+| Name | Source |
+| :--- | :--------- |
+| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
+| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
+| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
+| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
+
+## Commands
+
+# init
+
+# print
+
+# install
+
+# generate
+
+Once installed, you can view all available commands and flags with `protobuffed --help`.
+
+```
+Protocol buffers buffed up. Making it easier to work with protobuf files and binaries
+
+Usage:
+  protobuffed [command]
+
+Available Commands:
+  command     Print the executable command.
+  completion  Generate the autocompletion script for the specified shell
+  generate    Generate source code.
+  help        Help about any command
+  install     Install binaries
+
+Flags:
+  -c, --cache string   The directory where binaries will be installed and executed from. (default "$HOME/.protobuffed")
+  -f, --file string    The configuration file (default "protobuffed.json")
+  -h, --help           help for protobuffed
+
+Use "protobuffed [command] --help" for more information about a command.
+```
+
+To install binaries and generate source code, run `protobuffed generate -f protobuffed.json`.
+
+To print the command which can be executed manually, run `protobuffed command -f protobuffed.json`.
+
+If you would like to only install the binaries (no source code generated), run `protobuffed install -f protobuffed.json`.
+
+
 
 ## Cache
 
