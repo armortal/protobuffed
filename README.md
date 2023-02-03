@@ -12,6 +12,7 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
+	- []
 - [Configuration](#configuration)
 - [Plugins](#plugins)
 - [Commands](#commands)
@@ -32,8 +33,7 @@ Install with `go`:
 
 ### Initializing a new project
 
-Protobuffed uses a configuration file that describes the project's plugins and its associated configuration. You can initialize
-a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
+Protobuffed uses a [configuration](#configuration) file that describes the project's plugins and its associated configuration. You can initialize a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
 
 ```json
 {
@@ -46,11 +46,7 @@ a new project by running `protobuffed init` (generally in the root folder of you
 }
 ```
 
-
-
 ## Configuration
-
-Protobuffed uses a single configuration file (default is `protobuffed.json`) that describes the project's plugins and its associated configuration. The following is an example of what a configuration file looks like:
 
 ```json
 {
