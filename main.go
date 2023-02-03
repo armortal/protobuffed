@@ -27,6 +27,7 @@ import (
 	"os"
 
 	"github.com/armortal/protobuffed/cmd/generate"
+	cmdinit "github.com/armortal/protobuffed/cmd/init"
 	"github.com/armortal/protobuffed/cmd/install"
 	"github.com/armortal/protobuffed/cmd/print"
 	"github.com/armortal/protobuffed/core"
@@ -54,6 +55,7 @@ func main() {
 	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
 
 	cmd.AddCommand(generate.Command())
+	cmd.AddCommand(cmdinit.Command())
 	cmd.AddCommand(install.Command())
 	cmd.AddCommand(print.Command())
 
