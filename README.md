@@ -1,29 +1,37 @@
 # protobuffed [![test](https://github.com/armortal/protobuffed/actions/workflows/test.yml/badge.svg)](https://github.com/armortal/protobuffed/actions/workflows/test.yml)
 
-Protocol buffers buffed up :muscle: Making it easier to work with protobuf files and binaries.
+Protocol buffers buffed up :muscle: A lightweight tool for managing your protobuf projects.
 
-This project was originally developed to ease the burden when setting up projects that utilize protocol buffers. It can be time consuming and frustrating for developers to set up projects with the correct binaries and plugins, and keep up to date with new versions without having to constantly download and reinstall them.
+Protobuffed was originally developed to ease the workload on developers when working with projects that utilize protocol buffers.
+The process involved in setting up protobuf and plugin binaries can be overwhelming and time consuming particularly when working in teams and ensuring each developer has the same protobuf setup. Protobuffed aims to solve this issue by using a single configuration file that sits in your project's repository and does the heavy lifting so that developers don't need to.
 
-`protobuffed` uses a single configuration file that resides each project repository. The only requirement is for all developers to have this binary installed and everything else is handled seamlessly.
-
-> :warning: This project is currently in beta and we may make a changes (potentially breaking) as we gather feedback from early adopters until we get to the first stable major version.
+> :warning: This project is currently in active development and we may make changes (potentially breaking) as we gather feedback from early adopters until we get to the first major release.
 
 ## Contents
 
-- [Getting Started](#getting-started)
-	- [Installing](#installing)
+- [Installation](#installation)
+- [Plugins](#plugins)
+- [Getting Started](#getting-started)	
 	- [Commands](#commands)
 - [Configuration](#configuration)
 - [Cache](#cache)
 - [Contributing](#contributing)
 
-## Getting Started
-
-### Installing
+## Installation
 
 Install with `go`:
 
 `go install github.com/armortal/protobuffed@latest`
+
+
+## Plugins
+
+| Name | Source |
+| :--- | :--------- |
+| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
+| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
+| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web)
+## Getting Started
 
 ### Commands
 
