@@ -10,6 +10,8 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 ## Contents
 
 - [Installation](#installation)
+- [Getting Started](#getting-started)
+	- [Initializing a new project](#initializing-a-new-project)
 - [Configuration](#configuration)
 - [Plugins](#plugins)
 - [Commands](#commands)
@@ -25,6 +27,26 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 Install with `go`:
 
 `go install github.com/armortal/protobuffed@latest`
+
+## Getting Started
+
+### Initializing a new project
+
+Protobuffed uses a configuration file that describes the project's plugins and its associated configuration. You can initialize
+a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
+
+```json
+{
+    "protobuf": {
+        "version": "latest"
+    },
+    "imports": [],
+    "inputs": [],
+    "plugins": []
+}
+```
+
+
 
 ## Configuration
 
