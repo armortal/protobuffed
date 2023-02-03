@@ -20,39 +20,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package core
+package init
 
-import "testing"
+import (
+	"encoding/json"
+	"os"
 
-func TestConfig_validate(t *testing.T) {
-	config := &Config{
-		Protobuf: &ProtobufConfig{
-			Version: "21.12",
+	"github.com/armortal/protobuffed/core"
+	"github.com/spf13/cobra"
+)
+
+func Command() *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "init",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			config := &core.Config{
+				Protobuf: &core.ProtobufConfig{
+					Version: "latest",
+				},
+				Imports: make([]string, 0),
+				Inputs:  make([]string, 0),
+				Plugins: make([]*core.PluginConfig, 0),
+			}
+
+			b, err := json.MarshalIndent(config, "", "    ")
+			if err != nil {
+				return err
+			}
+
+			f, err := cmd.Flags().GetString("file")
+			if err != nil {
+				return err
+			}
+
+			if err := os.WriteFile(f, b, 0700); err != nil {
+				return err
+			}
+
+			return nil
 		},
-		Plugins: []*PluginConfig{
-			{
-				Name:    "testplugin",
-				Version: "1.0.0",
-				Options: "",
-				Output:  "test",
-			},
-		},
 	}
 
-	if config.validate() != nil {
-		t.Fatal()
-	}
-
-	config.Protobuf.Version = ""
-
-	if config.validate() == nil {
-		t.Fatal()
-	}
-
-	config.Protobuf.Version = "21.12"
-	config.Plugins[0].Version = ""
-
-	if config.validate() == nil {
-		t.Fatal()
-	}
+	return cmd
 }

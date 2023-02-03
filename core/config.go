@@ -30,10 +30,14 @@ import (
 )
 
 type Config struct {
-	Version string          `json:"version"`
-	Imports []string        `json:"imports"`
-	Inputs  []string        `json:"inputs"`
-	Plugins []*PluginConfig `json:"plugins"`
+	Protobuf *ProtobufConfig `json:"protobuf"`
+	Imports  []string        `json:"imports"`
+	Inputs   []string        `json:"inputs"`
+	Plugins  []*PluginConfig `json:"plugins"`
+}
+
+type ProtobufConfig struct {
+	Version string `json:"version"`
 }
 
 type PluginConfig struct {
@@ -58,7 +62,11 @@ func ReadConfig(file string) (*Config, error) {
 }
 
 func (c *Config) validate() error {
-	if c.Version == "" {
+	if c.Protobuf == nil {
+		return fmt.Errorf("config: protobuf configuration not provided")
+	}
+
+	if c.Protobuf.Version == "" {
 		return errors.New("config: protobuf version not provided")
 	}
 

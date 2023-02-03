@@ -44,12 +44,12 @@ func Install(config *Config, cache string) error {
 	}
 
 	// install protobuf
-	pb := protobufVersionPath(cache, config.Version)
+	pb := protobufVersionPath(cache, config.Protobuf.Version)
 	if _, err := os.Stat(pb); os.IsNotExist(err) {
 		if err := os.MkdirAll(pb, 0700); err != nil {
 			return err
 		}
-		if err := installProtobuf(config.Version, pb); err != nil {
+		if err := installProtobuf(config.Protobuf.Version, pb); err != nil {
 			return err
 		}
 	}

@@ -29,7 +29,9 @@ import (
 
 func TestCommand(t *testing.T) {
 	config := &Config{
-		Version: "21.12",
+		Protobuf: &ProtobufConfig{
+			Version: "21.12",
+		},
 		Imports: []string{"test"},
 		Inputs:  []string{"test.proto"},
 		Plugins: []*PluginConfig{
