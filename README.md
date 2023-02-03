@@ -80,6 +80,8 @@ Protobuffed uses a single configuration file (default is `protobuffed.json`) to 
 
 ## Plugins
 
+Protobuffed supports the following official plugins:
+
 | Name | Source |
 | :--- | :--------- |
 | **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
@@ -87,15 +89,18 @@ Protobuffed uses a single configuration file (default is `protobuffed.json`) to 
 | **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
 | **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
 
+
 ## Commands
 
-# init
+### init
 
-# print
+`init` initializes a new configuration file.
 
-# install
+### print
 
-# generate
+### install
+
+### generate
 
 Once installed, you can view all available commands and flags with `protobuffed --help`.
 
