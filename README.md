@@ -28,11 +28,13 @@ Install with `go`:
 
 ## Configuration
 
-Protobuffed uses a single configuration file (default is `protobuffed.json`) to determine the versions of the binaries to install and execute. The following is an example of what a configuration file looks like:
+Protobuffed uses a single configuration file (default is `protobuffed.json`) that describes the project's plugins and its associated configuration. The following is an example of what a configuration file looks like:
 
 ```json
 {
-	"version" : "21.12",
+	"protobuf" : {
+		"version": "21.12"
+	},
 	"imports" : [
 		"test"
 	],
