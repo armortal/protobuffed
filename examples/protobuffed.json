@@ -8,28 +8,28 @@
     ],
     "plugins": [
         {
-			"name" : "go",
-			"version" : "1.28.1",
-			"options" : "paths=source_relative",
-			"output" : "go/"
-		},
-		{
-			"name" : "go-grpc",
-			"version" : "1.52.3",
-			"options" : "paths=source_relative",
-			"output" : "go/"
-		},
-        {
-            "name" : "grpc-web",
-			"version" : "1.4.2",
-			"options" : "import_style=commonjs+dts,mode=grpcwebtext",
-			"output" : "web/"
+            "name": "go",
+            "version": "1.28.1",
+            "options": "paths=source_relative",
+            "output": "go/"
         },
         {
-			"name" : "js",
-			"version" : "3.21.2",
-			"options" : "import_style=commonjs,binary",
-			"output" : "web/"
-		}
+            "name": "go-grpc",
+            "version": "1.52.3",
+            "options": "paths=source_relative",
+            "output": "go/"
+        },
+        {
+            "name": "grpc-web",
+            "version": "1.4.2",
+            "options": "import_style=commonjs+dts,mode=grpcwebtext",
+            "output": "web/"
+        },
+        {
+            "name": "js",
+            "version": "3.21.2",
+            "options": "import_style=commonjs,binary",
+            "output": "web/"
+        }
     ]
 }
