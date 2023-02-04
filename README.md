@@ -12,7 +12,8 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
-	- []
+	- [Adding proto files](#adding-proto-files)
+	- [Plugins](#plugins)
 - [Configuration](#configuration)
 - [Plugins](#plugins)
 - [Commands](#commands)
@@ -46,6 +47,15 @@ Protobuffed uses a [configuration](#configuration) file that describes the proje
 }
 ```
 
+### Adding proto files
+
+Once you have defined your project's `.proto` files, they need to be added to the `inputs` array. Any imports that you use in your protobuf files also need to be added as `imports` so that the protobuf compiler knows where to look for these imports.
+
+### Plugins
+
+
+
+
 ### Installing protobuf
 
 With the standard configuration, running `protobuffed install` will only install protobuf. When you run this, a [cache](#cache) folder named `.protobuffed` will be created which all binaries will be installed at. You can change this default location by specifying the `-c` or `--cache` flag. After running `install`, your project should now look like:
@@ -55,13 +65,11 @@ With the standard configuration, running `protobuffed install` will only install
 |    |--- protobuf/
 |    |    |--- 21.12/
 |    |
-|    .protobuffed.json
+|    protobuffed.json
 
 ```
 
-### Adding proto files
-
-Once you have defined your project's `.proto` files, we now need to add them as inputs. The `inputs` field is where you will add these. For a `.proto` file located at `api/helloworld.proto`,
+You can add the `.protobuffed` folder to your `.gitignore` so that the binaries aren't committed to Git.
 
 ## Configuration
 
