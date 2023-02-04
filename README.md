@@ -12,8 +12,9 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
-	- [Adding proto files](#adding-proto-files)
-	- [Plugins](#plugins)
+	- [Configure proto files](#configure-proto-files)
+	- [Adding plugins](#adding-plugins)
+	- [Generating code](#generating-code)
 - [Configuration](#configuration)
 - [Plugins](#plugins)
 - [Commands](#commands)
@@ -32,6 +33,8 @@ Install with `go`:
 
 ## Getting Started
 
+This getting started guide is based off our example which you can find in the [examples directory](./examples/).
+
 ### Initializing a new project
 
 Protobuffed uses a [configuration](#configuration) file that describes the project's plugins and its associated configuration. You can initialize a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
@@ -47,13 +50,71 @@ Protobuffed uses a [configuration](#configuration) file that describes the proje
 }
 ```
 
-### Adding proto files
+### Creating proto files
 
-Once you have defined your project's `.proto` files, they need to be added to the `inputs` array. Any imports that you use in your protobuf files also need to be added as `imports` so that the protobuf compiler knows where to look for these imports.
+Each project will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an auth service.
 
-### Plugins
+```proto
+syntax = "proto3";
+
+option go_package = "github.com/armortal/protobuffed/examples/go;auth";
+
+package armortal.protobuffed.examples;
+
+service Auth {
+    rpc SignIn(SignInRequest) returns (SignInResponse);
+
+    rpc SignUp(SignUpRequest) returns (SignUpResponse);
+}
+
+message SignInRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignInResponse {
+    string token = 1;
+}
+
+message SignUpRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message SignUpResponse {
+    string token = 1;
+}
+```
+
+Once you have defined your project's `.proto` files, they need to be added to the `inputs` array in the configuration file.
+
+```json
+{
+    "protobuf": {
+        "version": "21.12"
+    },
+    "imports": [],
+    "inputs": [
+        "example.proto"
+    ],
+    "plugins": []
+}
+```
+
+> :warning: Any imports that you use in your protobuf files also need to be added to `imports` so that the protobuf compiler knows where to look for these imports.
+
+Your project layout should now look like:
+
+```
+|--- example.proto
+|--- protobuffed.json
+```
+
+### Adding plugins
 
 
+
+### Generating code
 
 
 ### Installing protobuf
