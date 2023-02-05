@@ -283,7 +283,7 @@ All commands support the following flags:
 
 ## Cache
 
-By default, all binaries are stored in a `.protobuffed` directory in the folder which Protobuffed is executed. You can override the default by specifying the `-c` or `--cache` flag when running commands.
+By default, all binaries are stored in a `.protobuffed` directory in the folder where Protobuffed is executed. You can override the default by specifying the `-c` or `--cache` flag when running commands.
 
 The `protobuf` binaries are located at `.protobuffed/protobuf/${VERSION}`.
 
