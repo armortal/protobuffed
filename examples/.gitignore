@@ -1,0 +1,2 @@
+# We add this so we don't commit binaries to Git.
+.protobuffed/

@@ -32,7 +32,8 @@ import (
 
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "init",
+		Use:   "init",
+		Short: "Initialize a new project",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			config := &core.Config{
 				Protobuf: &core.ProtobufConfig{

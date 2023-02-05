@@ -48,11 +48,11 @@ func init() {
 func main() {
 	cmd := &cobra.Command{
 		Use:   "protobuffed",
-		Short: "Protocol buffers buffed up. Making it easier to work with protobuf files and binaries",
+		Short: "Protocol buffers buffed up. A lightweight tool for managing your protobuf projects.",
 	}
 
-	cmd.PersistentFlags().StringP("cache", "c", ".protobuffed", "The directory where binaries will be installed and executed from.")
-	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "The configuration file")
+	cmd.PersistentFlags().StringP("cache", "c", ".protobuffed", "Path where binaries will be installed and executed from")
+	cmd.PersistentFlags().StringP("file", "f", "protobuffed.json", "Path of the configuration file")
 
 	cmd.AddCommand(generate.Command())
 	cmd.AddCommand(cmdinit.Command())
