@@ -260,21 +260,21 @@ A configuration file represents your project's protobuf and plugin configuration
 
 ## Commands
 
+### generate
+
+`protobuffed generated` will generate source code for a given configuration. If the binaries are not installed, this command will install them first.
+
 ### init
 
 `protobuffed init` initializes a new configuration file.
-
-### print
-
-`protobuffed print` will print out the `protoc` executable command for a given configuration which you can use to run manually.
 
 ### install
 
 `protobuffed install` will install all binaries for a given configuration.
 
-### generate
+### print
 
-`protobuffed generated` will generate source code for a given configuration. If the binaries are not installed, this command will install them first.
+`protobuffed print` will print out the `protoc` executable command for a given configuration which you can use to run manually.
 
 ## Cache
 
