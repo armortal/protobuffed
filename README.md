@@ -17,14 +17,10 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
 - [Commands](#commands)
-	- [add](#add)
 	- [generate](#generate)
 	- [init](#init)
 	- [install](#install)
 	- [print](#print)
-	- [remove](#remove)
-
-
 - [Cache](#cache)
 - [Contributing](#contributing)
 
@@ -124,25 +120,89 @@ You can one or more plugins in a single configuration file for your project. Pro
 | **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
 | **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
 
-To add a plugin, run `protobuffed add plugins` with a comma separated list of plugins. 
+Let's create some folders where our generated code will be for `go` and `web` projects. Your project should now look like
+
+```
+|--- go/
+|--- web/
+|--- example.proto
+|--- protobuffed.json
+```
+
+We'll now add the plugins to the configuration file:
+
+```json
+{
+    "protobuf": {
+        "version": "21.12"
+    },
+    "imports": [],
+    "inputs": [
+        "example.proto"
+    ],
+    "plugins": [
+        {
+            "name": "go",
+            "version": "1.28.1",
+            "options": "paths=source_relative",
+            "output": "go/"
+        },
+        {
+            "name": "go-grpc",
+            "version": "1.52.3",
+            "options": "paths=source_relative",
+            "output": "go/"
+        },
+        {
+            "name": "grpc-web",
+            "version": "1.4.2",
+            "options": "import_style=commonjs+dts,mode=grpcwebtext",
+            "output": "web/"
+        },
+        {
+            "name": "js",
+            "version": "3.21.2",
+            "options": "import_style=commonjs,binary",
+            "output": "web/"
+        }
+    ]
+}
+```
 
 ### Generating code
 
+Now that our configuration file is defined, we can now generate source code with `protobuffed generate`. When executing this command, Protobuffed will first check to see if the binaries exist in the [cache](#cache) and if not they will be installed first before the source code is generated.
 
-### Installing protobuf
+> :information_source: If you would like to just install the binaries and not generate the source code, run `protobuffed install`.
 
-With the standard configuration, running `protobuffed install` will only install protobuf. When you run this, a [cache](#cache) folder named `.protobuffed` will be created which all binaries will be installed at. You can change this default location by specifying the `-c` or `--cache` flag. After running `install`, your project should now look like:
+If the default cache location is used, you will see a newly created folder named `.protobuffed` which contains `protoc` and `protoc-gen` binaries in the project root. Your project should now look like:
 
 ```
-|--- .protobuffed
-|    |--- protobuf/
+|--- .protobuffed/
+|	 |--- plugins
+|    |    |--- go/
+|    |    |    |--- 1.28.1/
+|	 |    |--- go-grpc/
+|    |    |    |--- 1.52.3/
+|    |    |--- grpc-web/
+|    |    |    |--- 1.4.2/
+|    |    |--- js/
+|    |    |    |--- 3.21.2/
+|	 |--- protobuf/
 |    |    |--- 21.12/
-|    |
-|    protobuffed.json
-
+|--- go/
+|    |--- example.pb.go
+|    |--- example_grpc.pb.go
+|    web/
+|    |--- example_grpc_web_pb.d.ts
+|    |--- example_grpc_web_pb.js
+|    |--- example_pb.d.ts
+|    |--- example_pb.js
+|--- example.proto
+|--- protobuffed.json
 ```
 
-You can add the `.protobuffed` folder to your `.gitignore` so that the binaries aren't committed to Git.
+Update your `.gitignore` to include `.protobuffed/` so that the binaries aren't committed to Git.
 
 ## Configuration
 
@@ -198,8 +258,6 @@ You can add the `.protobuffed` folder to your `.gitignore` so that the binaries 
 
 ## Commands
 
-### add
-
 ### init
 
 `init` initializes a new configuration file.
@@ -209,40 +267,6 @@ You can add the `.protobuffed` folder to your `.gitignore` so that the binaries 
 ### install
 
 ### generate
-
-### remove
-
-
-Once installed, you can view all available commands and flags with `protobuffed --help`.
-
-```
-Protocol buffers buffed up. Making it easier to work with protobuf files and binaries
-
-Usage:
-  protobuffed [command]
-
-Available Commands:
-  command     Print the executable command.
-  completion  Generate the autocompletion script for the specified shell
-  generate    Generate source code.
-  help        Help about any command
-  install     Install binaries
-
-Flags:
-  -c, --cache string   The directory where binaries will be installed and executed from. (default "$HOME/.protobuffed")
-  -f, --file string    The configuration file (default "protobuffed.json")
-  -h, --help           help for protobuffed
-
-Use "protobuffed [command] --help" for more information about a command.
-```
-
-To install binaries and generate source code, run `protobuffed generate -f protobuffed.json`.
-
-To print the command which can be executed manually, run `protobuffed command -f protobuffed.json`.
-
-If you would like to only install the binaries (no source code generated), run `protobuffed install -f protobuffed.json`.
-
-
 
 ## Cache
 
