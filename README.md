@@ -16,12 +16,15 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 	- [Adding plugins](#adding-plugins)
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
-- [Plugins](#plugins)
 - [Commands](#commands)
-	- [init](#init)
-	- [print](#print)
-	- [install](#install)
+	- [add](#add)
 	- [generate](#generate)
+	- [init](#init)
+	- [install](#install)
+	- [print](#print)
+	- [remove](#remove)
+
+
 - [Cache](#cache)
 - [Contributing](#contributing)
 
@@ -193,19 +196,9 @@ You can add the `.protobuffed` folder to your `.gitignore` so that the binaries 
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |
 
-## Plugins
-
-Protobuffed supports the following official plugins:
-
-| Name | Source |
-| :--- | :--------- |
-| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
-| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
-| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
-| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
-
-
 ## Commands
+
+### add
 
 ### init
 
@@ -216,6 +209,9 @@ Protobuffed supports the following official plugins:
 ### install
 
 ### generate
+
+### remove
+
 
 Once installed, you can view all available commands and flags with `protobuffed --help`.
 
