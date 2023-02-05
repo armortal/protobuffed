@@ -123,8 +123,8 @@ You can one or more plugins in a single configuration file for your project. Pro
 Let's create some folders where our generated code will be for `go` and `web` projects. Your project should now look like
 
 ```
-|--- go/
-|--- web/
+|--- _go/
+|--- _web/
 |--- example.proto
 |--- protobuffed.json
 ```
@@ -145,25 +145,25 @@ We'll now add the plugins to the configuration file:
             "name": "go",
             "version": "1.28.1",
             "options": "paths=source_relative",
-            "output": "go/"
+            "output": "_go/"
         },
         {
             "name": "go-grpc",
             "version": "1.52.3",
             "options": "paths=source_relative",
-            "output": "go/"
+            "output": "_go/"
         },
         {
             "name": "grpc-web",
             "version": "1.4.2",
             "options": "import_style=commonjs+dts,mode=grpcwebtext",
-            "output": "web/"
+            "output": "_web/"
         },
         {
             "name": "js",
             "version": "3.21.2",
             "options": "import_style=commonjs,binary",
-            "output": "web/"
+            "output": "_web/"
         }
     ]
 }
@@ -181,10 +181,10 @@ If the default cache location is used, you will see a newly created folder named
 ├── .protobuffed/
 |   ├── plugins/
 |   ├── protobuf/
-├── go/
+├── _go/
 |   ├── example.pb.go
 |   ├── example_grpc.pb.go
-├── web/
+├── _web/
 |   ├── example_grpc_web_pb.d.ts
 |   ├── example_grpc_web_pb.js
 |   ├── example_pb.d.ts
@@ -212,25 +212,25 @@ A configuration file represents your project's protobuf and plugin configuration
             "name": "go",
             "version": "1.28.1",
             "options": "paths=source_relative",
-            "output": "go/"
+            "output": "_go/"
         },
         {
             "name": "go-grpc",
             "version": "1.52.3",
             "options": "paths=source_relative",
-            "output": "go/"
+            "output": "_go/"
         },
         {
             "name": "grpc-web",
             "version": "1.4.2",
             "options": "import_style=commonjs+dts,mode=grpcwebtext",
-            "output": "web/"
+            "output": "_web/"
         },
         {
             "name": "js",
             "version": "3.21.2",
             "options": "import_style=commonjs,binary",
-            "output": "web/"
+            "output": "_web/"
         }
     ]
 }
