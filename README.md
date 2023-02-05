@@ -179,21 +179,21 @@ If the default cache location is used, you will see a newly created folder named
 
 ```
 |--- .protobuffed/
-|	 |--- plugins
+|    |--- plugins
 |    |    |--- go/
 |    |    |    |--- 1.28.1/
-|	 |    |--- go-grpc/
+|    |    |--- go-grpc/
 |    |    |    |--- 1.52.3/
 |    |    |--- grpc-web/
 |    |    |    |--- 1.4.2/
 |    |    |--- js/
 |    |    |    |--- 3.21.2/
-|	 |--- protobuf/
+|    |--- protobuf/
 |    |    |--- 21.12/
 |--- go/
 |    |--- example.pb.go
 |    |--- example_grpc.pb.go
-|    web/
+|--- web/
 |    |--- example_grpc_web_pb.d.ts
 |    |--- example_grpc_web_pb.js
 |    |--- example_pb.d.ts
