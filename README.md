@@ -178,28 +178,28 @@ Now that our configuration file is defined, we can now generate source code with
 If the default cache location is used, you will see a newly created folder named `.protobuffed` which contains `protoc` and `protoc-gen` binaries in the project root. Your project should now look like:
 
 ```
-|--- .protobuffed/
-|    |--- plugins
-|    |    |--- go/
-|    |    |    |--- 1.28.1/
-|    |    |--- go-grpc/
-|    |    |    |--- 1.52.3/
-|    |    |--- grpc-web/
-|    |    |    |--- 1.4.2/
-|    |    |--- js/
-|    |    |    |--- 3.21.2/
-|    |--- protobuf/
-|    |    |--- 21.12/
-|--- go/
-|    |--- example.pb.go
-|    |--- example_grpc.pb.go
-|--- web/
-|    |--- example_grpc_web_pb.d.ts
-|    |--- example_grpc_web_pb.js
-|    |--- example_pb.d.ts
-|    |--- example_pb.js
-|--- example.proto
-|--- protobuffed.json
+├── .protobuffed/
+|   ├── plugins
+|   |   ├── go/
+|   |   |   └── 1.28.1/
+|   |   ├── go-grpc/
+|   |   |   └── 1.52.3/
+|   |   ├── grpc-web/
+|   |   |   └── 1.4.2/
+|   |   ├── js/
+|   |   |   └── 3.21.2/
+|   ├── protobuf/
+|   |   └── 21.12/
+├── go/
+|   ├── example.pb.go
+|   ├── example_grpc.pb.go
+├── web/
+|   ├── example_grpc_web_pb.d.ts
+|   ├── example_grpc_web_pb.js
+|   ├── example_pb.d.ts
+|   ├── example_pb.js
+├── example.proto
+├── protobuffed.json
 ```
 
 Update your `.gitignore` to include `.protobuffed/` so that the binaries aren't committed to Git.
