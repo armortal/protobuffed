@@ -30,7 +30,7 @@ import (
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "generate",
-		Short: "Generate source code.",
+		Short: "Generate source code",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read in the config.
 			f, err := cmd.Flags().GetString("file")

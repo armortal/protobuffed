@@ -32,7 +32,7 @@ import (
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "print",
-		Short: "Print the executable command.",
+		Short: "Print the executable command",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Read in the config.
 			f, err := cmd.Flags().GetString("file")
