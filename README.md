@@ -262,8 +262,8 @@ A configuration file represents your project's protobuf and plugin configuration
 
 All commands support the following flags:
 
-- `-c` or `--cache` (location of the cache where binaries will be installed and executed from)
-- `-f` or `--file` (location of the configuration file)
+- `-c` or `--cache` - path of the cache where binaries will be installed and executed from (default is `.protobuffed`)
+- `-f` or `--file` - path of the configuration file (default is `protobuffed.json`)
 
 ### generate
 
