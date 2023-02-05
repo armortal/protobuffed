@@ -26,7 +26,7 @@
 // - protoc             v3.21.12
 // source: example.proto
 
-package auth
+package example
 
 import (
 	context "context"
@@ -58,7 +58,7 @@ func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
 
 func (c *authClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error) {
 	out := new(SignInResponse)
-	err := c.cc.Invoke(ctx, "/armortal.protobuffed.examples.Auth/SignIn", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/armortal.protobuffed.example.Auth/SignIn", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (c *authClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc
 
 func (c *authClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error) {
 	out := new(SignUpResponse)
-	err := c.cc.Invoke(ctx, "/armortal.protobuffed.examples.Auth/SignUp", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/armortal.protobuffed.example.Auth/SignUp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func _Auth_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/armortal.protobuffed.examples.Auth/SignIn",
+		FullMethod: "/armortal.protobuffed.example.Auth/SignIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).SignIn(ctx, req.(*SignInRequest))
@@ -134,7 +134,7 @@ func _Auth_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/armortal.protobuffed.examples.Auth/SignUp",
+		FullMethod: "/armortal.protobuffed.example.Auth/SignUp",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).SignUp(ctx, req.(*SignUpRequest))
@@ -146,7 +146,7 @@ func _Auth_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interfa
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Auth_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "armortal.protobuffed.examples.Auth",
+	ServiceName: "armortal.protobuffed.example.Auth",
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

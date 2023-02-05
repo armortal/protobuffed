@@ -12,7 +12,7 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
-	- [Creating proto files](#creating-proto-files)
+	- [Adding proto files](#adding-proto-files)
 	- [Adding plugins](#adding-plugins)
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
@@ -49,16 +49,16 @@ Protobuffed uses a [configuration](#configuration) file that describes the proje
 }
 ```
 
-### Creating proto files
+### Adding proto files
 
-Each one of your projects will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an auth service in a file named `example.proto`.
+Each one of your projects will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an *auth* service in a file named `example.proto`.
 
 ```proto
 syntax = "proto3";
 
-option go_package = "github.com/armortal/protobuffed/examples/go;auth";
+option go_package = "github.com/armortal/protobuffed/examples/go;example";
 
-package armortal.protobuffed.examples;
+package armortal.protobuffed.example;
 
 service Auth {
     rpc SignIn(SignInRequest) returns (SignInResponse);
@@ -175,21 +175,12 @@ Now that our configuration file is defined, we can now generate source code with
 
 > :information_source: If you would like to just install the binaries and not generate the source code, run `protobuffed install`.
 
-If the default cache location is used, you will see a newly created folder named `.protobuffed` which contains `protoc` and `protoc-gen` binaries in the project root. Your project should now look like:
+If the default cache location is used, you will see a newly created folder named `.protobuffed` which contains `protoc` and `protoc-gen` binaries. You should update your `.gitignore` to include `.protobuffed/` so that the binaries aren't committed to Git. With the binaries installed and the code generated, your project should now look like:
 
 ```
 ├── .protobuffed/
-|   ├── plugins
-|   |   ├── go/
-|   |   |   └── 1.28.1/
-|   |   ├── go-grpc/
-|   |   |   └── 1.52.3/
-|   |   ├── grpc-web/
-|   |   |   └── 1.4.2/
-|   |   ├── js/
-|   |   |   └── 3.21.2/
+|   ├── plugins/
 |   ├── protobuf/
-|   |   └── 21.12/
 ├── go/
 |   ├── example.pb.go
 |   ├── example_grpc.pb.go
@@ -198,60 +189,71 @@ If the default cache location is used, you will see a newly created folder named
 |   ├── example_grpc_web_pb.js
 |   ├── example_pb.d.ts
 |   ├── example_pb.js
+├── .gitignore
 ├── example.proto
 ├── protobuffed.json
 ```
 
-Update your `.gitignore` to include `.protobuffed/` so that the binaries aren't committed to Git.
-
 ## Configuration
+
+A configuration file represents your project's protobuf and plugin configuration.
 
 ```json
 {
-	"protobuf" : {
-		"version": "21.12"
-	},
-	"imports" : [
-		"test"
-	],
-	"inputs" : [
-		"test.proto"
-	],
-	"plugins" : [
-		{
-			"name" : "go",
-			"version" : "1.28.1",
-			"options" : "paths=source_relative",
-			"output" : "test"
-		},
-		{
-			"name" : "go-grpc",
-			"version" : "1.52.3",
-			"options" : "paths=source_relative",
-			"output" : "test"
-		},
-		{
-			"name" : "grpc-web",
-			"version" : "1.4.2",
-			"options" : "import_style=commonjs+dts,mode=grpcwebtext",
-			"output" : "testing"
-		}
-	]
+    "protobuf": {
+        "version": "21.12"
+    },
+    "imports": [],
+    "inputs": [
+        "example.proto"
+    ],
+    "plugins": [
+        {
+            "name": "go",
+            "version": "1.28.1",
+            "options": "paths=source_relative",
+            "output": "go/"
+        },
+        {
+            "name": "go-grpc",
+            "version": "1.52.3",
+            "options": "paths=source_relative",
+            "output": "go/"
+        },
+        {
+            "name": "grpc-web",
+            "version": "1.4.2",
+            "options": "import_style=commonjs+dts,mode=grpcwebtext",
+            "output": "web/"
+        },
+        {
+            "name": "js",
+            "version": "3.21.2",
+            "options": "import_style=commonjs,binary",
+            "output": "web/"
+        }
+    ]
 }
 ```
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `version` | **string** | The version of protobuf to use. |
+| `protobuf` | [Protobuf](#protobuf) | Protobuf configuration. |
 | `imports` | **[]string** | Imports to include. |
 | `inputs` | **[]string** | Proto files to generate source for. |
 | `plugins` | **[][Plugin](#plugin)** | Plugins to include. |
+
+### Protobuf
+
+| Name | Type | Description |
+| :--- | :--- | :---------- | 
+| `version` | **string** | The version of protobuf to use. |
 
 ### Plugin
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`, `grpc-web`). |
+| `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`, `grpc-web`, and `js`). |
 | `version` | **string** | The plugin version. |
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |
@@ -260,21 +262,27 @@ Update your `.gitignore` to include `.protobuffed/` so that the binaries aren't 
 
 ### init
 
-`init` initializes a new configuration file.
+`protobuffed init` initializes a new configuration file.
 
 ### print
 
+`protobuffed print` will print out the `protoc` executable command for a given configuration which you can use to run manually.
+
 ### install
+
+`protobuffed install` will install all binaries for a given configuration.
 
 ### generate
 
+`protobuffed generated` will generate source code for a given configuration. If the binaries are not installed, this command will install them first.
+
 ## Cache
 
-By default, all binaries are stored in the `$HOME/.protobuffed` directory. You can override the default by specifying the `--cache` or `-c` flag when running commands.
+By default, all binaries are stored in a `.protobuffed` directory in the folder which Protobuffed is executed. You can override the default by specifying the `-c` or `--cache` flag when running commands.
 
-The `protobuf` binaries are located at `protobuf/${VERSION}`.
+The `protobuf` binaries are located at `.protobuffed/protobuf/${VERSION}`.
 
-All the plugin binaries are located at `plugins/${PLUGIN_NAME}/${VERSION}`.
+The plugin binaries are located at `.protobuffed/plugins/${NAME}/${VERSION}`.
 
 ## Contributing
 

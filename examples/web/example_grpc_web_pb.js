@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for armortal.protobuffed.examples
+ * @fileoverview gRPC-Web generated client stub for armortal.protobuffed.example
  * @enhanceable
  * @public
  */
@@ -22,7 +22,7 @@ grpc.web = require('grpc-web');
 const proto = {};
 proto.armortal = {};
 proto.armortal.protobuffed = {};
-proto.armortal.protobuffed.examples = require('./example_pb.js');
+proto.armortal.protobuffed.example = require('./example_pb.js');
 
 /**
  * @param {string} hostname
@@ -32,7 +32,7 @@ proto.armortal.protobuffed.examples = require('./example_pb.js');
  * @struct
  * @final
  */
-proto.armortal.protobuffed.examples.AuthClient =
+proto.armortal.protobuffed.example.AuthClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -58,7 +58,7 @@ proto.armortal.protobuffed.examples.AuthClient =
  * @struct
  * @final
  */
-proto.armortal.protobuffed.examples.AuthPromiseClient =
+proto.armortal.protobuffed.example.AuthPromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -79,39 +79,39 @@ proto.armortal.protobuffed.examples.AuthPromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.armortal.protobuffed.examples.SignInRequest,
- *   !proto.armortal.protobuffed.examples.SignInResponse>}
+ *   !proto.armortal.protobuffed.example.SignInRequest,
+ *   !proto.armortal.protobuffed.example.SignInResponse>}
  */
 const methodDescriptor_Auth_SignIn = new grpc.web.MethodDescriptor(
-  '/armortal.protobuffed.examples.Auth/SignIn',
+  '/armortal.protobuffed.example.Auth/SignIn',
   grpc.web.MethodType.UNARY,
-  proto.armortal.protobuffed.examples.SignInRequest,
-  proto.armortal.protobuffed.examples.SignInResponse,
+  proto.armortal.protobuffed.example.SignInRequest,
+  proto.armortal.protobuffed.example.SignInResponse,
   /**
-   * @param {!proto.armortal.protobuffed.examples.SignInRequest} request
+   * @param {!proto.armortal.protobuffed.example.SignInRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.armortal.protobuffed.examples.SignInResponse.deserializeBinary
+  proto.armortal.protobuffed.example.SignInResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.armortal.protobuffed.examples.SignInRequest} request The
+ * @param {!proto.armortal.protobuffed.example.SignInRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.armortal.protobuffed.examples.SignInResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.armortal.protobuffed.example.SignInResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.armortal.protobuffed.examples.SignInResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.armortal.protobuffed.example.SignInResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.armortal.protobuffed.examples.AuthClient.prototype.signIn =
+proto.armortal.protobuffed.example.AuthClient.prototype.signIn =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/armortal.protobuffed.examples.Auth/SignIn',
+      '/armortal.protobuffed.example.Auth/SignIn',
       request,
       metadata || {},
       methodDescriptor_Auth_SignIn,
@@ -120,17 +120,17 @@ proto.armortal.protobuffed.examples.AuthClient.prototype.signIn =
 
 
 /**
- * @param {!proto.armortal.protobuffed.examples.SignInRequest} request The
+ * @param {!proto.armortal.protobuffed.example.SignInRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.armortal.protobuffed.examples.SignInResponse>}
+ * @return {!Promise<!proto.armortal.protobuffed.example.SignInResponse>}
  *     Promise that resolves to the response
  */
-proto.armortal.protobuffed.examples.AuthPromiseClient.prototype.signIn =
+proto.armortal.protobuffed.example.AuthPromiseClient.prototype.signIn =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/armortal.protobuffed.examples.Auth/SignIn',
+      '/armortal.protobuffed.example.Auth/SignIn',
       request,
       metadata || {},
       methodDescriptor_Auth_SignIn);
@@ -140,39 +140,39 @@ proto.armortal.protobuffed.examples.AuthPromiseClient.prototype.signIn =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.armortal.protobuffed.examples.SignUpRequest,
- *   !proto.armortal.protobuffed.examples.SignUpResponse>}
+ *   !proto.armortal.protobuffed.example.SignUpRequest,
+ *   !proto.armortal.protobuffed.example.SignUpResponse>}
  */
 const methodDescriptor_Auth_SignUp = new grpc.web.MethodDescriptor(
-  '/armortal.protobuffed.examples.Auth/SignUp',
+  '/armortal.protobuffed.example.Auth/SignUp',
   grpc.web.MethodType.UNARY,
-  proto.armortal.protobuffed.examples.SignUpRequest,
-  proto.armortal.protobuffed.examples.SignUpResponse,
+  proto.armortal.protobuffed.example.SignUpRequest,
+  proto.armortal.protobuffed.example.SignUpResponse,
   /**
-   * @param {!proto.armortal.protobuffed.examples.SignUpRequest} request
+   * @param {!proto.armortal.protobuffed.example.SignUpRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.armortal.protobuffed.examples.SignUpResponse.deserializeBinary
+  proto.armortal.protobuffed.example.SignUpResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.armortal.protobuffed.examples.SignUpRequest} request The
+ * @param {!proto.armortal.protobuffed.example.SignUpRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.armortal.protobuffed.examples.SignUpResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.armortal.protobuffed.example.SignUpResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.armortal.protobuffed.examples.SignUpResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.armortal.protobuffed.example.SignUpResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.armortal.protobuffed.examples.AuthClient.prototype.signUp =
+proto.armortal.protobuffed.example.AuthClient.prototype.signUp =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/armortal.protobuffed.examples.Auth/SignUp',
+      '/armortal.protobuffed.example.Auth/SignUp',
       request,
       metadata || {},
       methodDescriptor_Auth_SignUp,
@@ -181,22 +181,22 @@ proto.armortal.protobuffed.examples.AuthClient.prototype.signUp =
 
 
 /**
- * @param {!proto.armortal.protobuffed.examples.SignUpRequest} request The
+ * @param {!proto.armortal.protobuffed.example.SignUpRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.armortal.protobuffed.examples.SignUpResponse>}
+ * @return {!Promise<!proto.armortal.protobuffed.example.SignUpResponse>}
  *     Promise that resolves to the response
  */
-proto.armortal.protobuffed.examples.AuthPromiseClient.prototype.signUp =
+proto.armortal.protobuffed.example.AuthPromiseClient.prototype.signUp =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/armortal.protobuffed.examples.Auth/SignUp',
+      '/armortal.protobuffed.example.Auth/SignUp',
       request,
       metadata || {},
       methodDescriptor_Auth_SignUp);
 };
 
 
-module.exports = proto.armortal.protobuffed.examples;
+module.exports = proto.armortal.protobuffed.example;
 

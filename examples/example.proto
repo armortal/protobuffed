@@ -22,9 +22,9 @@
 
 syntax = "proto3";
 
-option go_package = "github.com/armortal/protobuffed/examples/go;auth";
+option go_package = "github.com/armortal/protobuffed/examples/go;example";
 
-package armortal.protobuffed.examples;
+package armortal.protobuffed.example;
 
 service Auth {
     rpc SignIn(SignInRequest) returns (SignInResponse);
