@@ -12,7 +12,7 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
-	- [Configure proto files](#configure-proto-files)
+	- [Creating proto files](#creating-proto-files)
 	- [Adding plugins](#adding-plugins)
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
@@ -52,7 +52,7 @@ Protobuffed uses a [configuration](#configuration) file that describes the proje
 
 ### Creating proto files
 
-Each project will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an auth service.
+Each one of your projects will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an auth service in a file named `example.proto`.
 
 ```proto
 syntax = "proto3";
@@ -112,7 +112,16 @@ Your project layout should now look like:
 
 ### Adding plugins
 
+You can one or more plugins in a single configuration file for your project. Protobuffed supports the following plugins:
 
+| Name | Source |
+| :--- | :--------- |
+| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
+| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
+| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
+| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
+
+To add a plugin, run `protobuffed add plugins` with a comma separated list of plugins. 
 
 ### Generating code
 
