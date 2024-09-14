@@ -33,6 +33,7 @@ import (
 	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/plugins/plugingo"
 	"github.com/armortal/protobuffed/plugins/plugingogrpc"
+	"github.com/armortal/protobuffed/plugins/plugingrpcgateway"
 	"github.com/armortal/protobuffed/plugins/plugingrpcweb"
 	"github.com/armortal/protobuffed/plugins/pluginjs"
 	"github.com/spf13/cobra"
@@ -41,6 +42,7 @@ import (
 func init() {
 	core.RegisterPlugin(plugingo.New())
 	core.RegisterPlugin(plugingogrpc.New())
+	core.RegisterPlugin(plugingrpcgateway.New())
 	core.RegisterPlugin(plugingrpcweb.New())
 	core.RegisterPlugin(pluginjs.New())
 }
