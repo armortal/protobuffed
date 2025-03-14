@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package plugingrpcweb
+package plugingrpcgateway
 
 import (
 	"os"
@@ -21,7 +21,7 @@ import (
 	"testing"
 )
 
-const testVersion = "1.4.2"
+const testVersion = "2.26.1"
 
 func testDirectory(version string) (string, error) {
 	wd, err := filepath.Abs(".")
@@ -34,6 +34,7 @@ func testDirectory(version string) (string, error) {
 func TestPlugin_Install(t *testing.T) {
 	p := New()
 
+	// Use current directory as path
 	dir, err := testDirectory(testVersion)
 	if err != nil {
 		t.Fatal(err)
@@ -47,19 +48,19 @@ func TestPlugin_Install(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	binary := "protoc-gen-grpc-web"
+	binary := "protoc-gen-grpc-gateway"
 	if runtime.GOOS == "windows" {
 		binary += ".exe"
 	}
 
 	if _, err := os.Stat(filepath.Join(dir, "bin", binary)); os.IsNotExist(err) {
-		t.Fatal("binary doesn't exist")
+		t.Fatal("exectuable doesn't exist")
 	}
 }
 
 func TestPlugin_Name(t *testing.T) {
 	p := New()
-	if p.Name() != "grpc-web" {
+	if p.Name() != "grpc-gateway" {
 		t.Fatal()
 	}
 }

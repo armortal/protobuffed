@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package plugingo
+package plugingrpcgateway
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/armortal/protobuffed/core"
 	"github.com/armortal/protobuffed/util"
@@ -36,33 +35,30 @@ func (p *Plugin) Install(version string, dst string) error {
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/v%s/%s", version, release)
 
-	archive := filepath.Join(dst, release)
-	if err := util.Download(url, archive); err != nil {
-		return err
-	}
-
+	// /v2.19.1/protoc-gen-grpc-gateway-v2.19.1-darwin-arm64
+	url := fmt.Sprintf("https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v%s/%s", version, release)
+	fmt.Println(url)
 	bin := filepath.Join(dst, "bin")
 	// Create the bin folder
 	if err := os.MkdirAll(bin, 0700); err != nil {
 		return err
 	}
 
-	if strings.HasSuffix(release, ".zip") {
-		if err := util.ExtractZip(archive, bin); err != nil {
-			return err
-		}
-	} else {
-		if err := util.ExtractTarGz(archive, bin); err != nil {
-			return err
-		}
+	output := filepath.Join(bin, "protoc-gen-grpc-gateway")
+	if runtime.GOOS == "windows" {
+		output += ".exe"
 	}
+
+	if err := util.Download(url, output); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (p *Plugin) Name() string {
-	return "go"
+	return "grpc-gateway"
 }
 
 func release(version string) (string, error) {
@@ -71,27 +67,27 @@ func release(version string) (string, error) {
 	case "windows":
 		switch runtime.GOARCH {
 		case "amd64":
-			platform = "windows.amd64.zip"
+			platform = "windows-x86_64.exe"
 		case "arm64":
-			platform = "windows.arm64.zip"
+			platform = "windows-arm64.exe"
 		default:
 			return "", errRuntimeNotSupported(version)
 		}
 	case "linux":
 		switch runtime.GOARCH {
 		case "amd64":
-			platform = "linux.amd64.tar.gz"
+			platform = "linux-x86_64"
 		case "arm64":
-			platform = "linux.arm64.tar.gz"
+			platform = "linux-arm64"
 		default:
 			return "", errRuntimeNotSupported(version)
 		}
 	case "darwin":
 		switch runtime.GOARCH {
 		case "amd64":
-			platform = "darwin.amd64.tar.gz"
+			platform = "darwin-x86_64"
 		case "arm64":
-			platform = "darwin.arm64.tar.gz"
+			platform = "darwin-arm64"
 		default:
 			return "", errRuntimeNotSupported(version)
 		}
@@ -99,7 +95,7 @@ func release(version string) (string, error) {
 		return "", errRuntimeNotSupported(version)
 	}
 
-	return fmt.Sprintf("protoc-gen-go.v%s.%s", version, platform), nil
+	return fmt.Sprintf("protoc-gen-grpc-gateway-v%s-%s", version, platform), nil
 }
 
 func errRuntimeNotSupported(version string) error {
