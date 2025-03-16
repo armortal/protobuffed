@@ -17,6 +17,7 @@ package util
 import (
 	"archive/tar"
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -91,6 +92,19 @@ func ExtractZip(src string, dst string) error {
 	return nil
 }
 
+func ExtractZipFromBytes(b []byte, dst string) error {
+	r, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
+	if err != nil {
+		return err
+	}
+
+	for _, f := range r.File {
+		if err := extractZip(f, dst); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func extractZip(f *zip.File, dst string) error {
 	fp := filepath.Join(dst, f.Name)
 	if !strings.HasPrefix(fp, filepath.Clean(dst)+string(os.PathSeparator)) {
