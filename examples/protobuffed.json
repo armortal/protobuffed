@@ -1,35 +1,46 @@
 {
-    "protobuf": {
-        "version": "21.12"
+  "name": "example",
+  "dependencies": {
+    "protoc": "v30.1",
+    "protoc-gen-go": "v1.36.5",
+    "protoc-gen-go-grpc": "v1.71.0",
+    "protoc-gen-grpc-gateway": "v2.26.1",
+    "protoc-gen-grpc-web": "v1.5.0",
+    "protoc-gen-js": "v3.21.4",
+    "googleapis": "git://github.com/googleapis/googleapis"
+  },
+  "imports": [
+    ".",
+    ".protobuffed/googleapis"
+  ],
+  "inputs": [
+    "example.proto"
+  ],
+  "plugins": [
+    {
+      "name": "go",
+      "options": "paths=source_relative",
+      "output": "./"
     },
-    "imports": [],
-    "inputs": [
-        "example.proto"
-    ],
-    "plugins": [
-        {
-            "name": "go",
-            "version": "1.28.1",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "go-grpc",
-            "version": "1.52.3",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "grpc-web",
-            "version": "1.4.2",
-            "options": "import_style=commonjs+dts,mode=grpcwebtext",
-            "output": "_web/"
-        },
-        {
-            "name": "js",
-            "version": "3.21.2",
-            "options": "import_style=commonjs,binary",
-            "output": "_web/"
-        }
-    ]
+    {
+      "name": "go-grpc",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-gateway",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-web",
+      "options": "import_style=commonjs+dts,mode=grpcwebtext",
+      "output": "./"
+    },
+    {
+      "name": "js",
+      "options": "import_style=commonjs,binary",
+      "output": "./"
+    }
+  ]
 }

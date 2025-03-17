@@ -17,7 +17,7 @@ package util
 import (
 	"archive/tar"
 	"archive/zip"
-	"compress/gzip"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -25,19 +25,29 @@ import (
 	"strings"
 )
 
-func ExtractTarGz(src string, dst string) error {
-	// Open the file to create a reader.
+// Extract extracts the archive at src to the directory dst. If the archive
+// format is not supported or there was an error extracting, an error is returned.
+func Extract(src string, dst string) error {
+	switch filepath.Ext(src) {
+	case ".tar":
+		return ExtractTar(src, dst)
+	case ".zip":
+		return ExtractZip(src, dst)
+	default:
+		return fmt.Errorf("unsupported archive format")
+	}
+}
+
+func ExtractTar(src string, dst string) error {
 	f, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	// Create a new gzip reader.
-	r, err := gzip.NewReader(f)
-	if err != nil {
-		return err
-	}
-	defer r.Close()
+	defer f.Close()
+	return extractTarFromReader(f, dst)
+}
 
+func extractTarFromReader(r io.Reader, dst string) error {
 	t := tar.NewReader(r)
 
 	for {
@@ -84,6 +94,20 @@ func ExtractZip(src string, dst string) error {
 	defer reader.Close()
 
 	for _, f := range reader.File {
+		if err := extractZip(f, dst); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ExtractZipFromBytes(b []byte, dst string) error {
+	r, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
+	if err != nil {
+		return err
+	}
+
+	for _, f := range r.File {
 		if err := extractZip(f, dst); err != nil {
 			return err
 		}
