@@ -30,12 +30,7 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 		return err
 	}
 
-	src := filepath.Join(dir.Path(), "src")
-	if err := os.MkdirAll(src, 0700); err != nil {
-		return err
-	}
-
-	if err := util.ExtractZipFromBytes(b, src); err != nil {
+	if err := util.ExtractZipFromBytes(b, dir.Path()); err != nil {
 		return err
 	}
 
@@ -52,7 +47,7 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 	cmd := exec.Command("go", "build", "-o", output, ".")
 	// We join the filename twice because archives from git creates the same subfolder with its contents
 	// The unzipped contents don't have the v prefix
-	cmd.Dir = filepath.Join(dir.Path(), "src", fmt.Sprintf("grpc-go-%s", strings.TrimPrefix(version, "v")), "cmd", "protoc-gen-go-grpc")
+	cmd.Dir = filepath.Join(dir.Path(), fmt.Sprintf("grpc-go-%s", strings.TrimPrefix(version, "v")), "cmd", "protoc-gen-go-grpc")
 	if err := cmd.Run(); err != nil {
 		return err
 	}

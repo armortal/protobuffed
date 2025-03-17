@@ -18,7 +18,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 
 	"github.com/armortal/protobuffed/cache"
 	"github.com/armortal/protobuffed/config"
@@ -34,23 +37,53 @@ type Operation struct{}
 // Calling this function will assume the binaries have been installed.
 // If an error occurs, it will be returned.
 func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
-	cmd := exec.Command(".protobuffed/protoc/bin/protoc")
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", "protoc")
+	} else {
+		cmd = exec.Command("/bin/sh", "-c", "protoc")
+	}
 
-	for _, plugin := range cfg.Plugins {
-		cmd.Args = append(cmd.Args,
-			fmt.Sprintf("--plugin=%s", fmt.Sprintf(".protobuffed/%s/bin/%s", plugin.Name, plugin.Name)))
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-		if plugin.Options != "" {
-			cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
+	// Set PATH variables
+	path := ""
+	// Add all dependencies' bin directories to the PATH
+	for name := range cfg.Dependencies {
+		p, err := filepath.Abs(fmt.Sprintf(".protobuffed/%s/bin", name))
+		if err != nil {
+			return err
 		}
+		if path != "" {
+			path = fmt.Sprintf("%s:%s", path, p)
+		} else {
+			path = p
+		}
+	}
 
+	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s:%s", path, os.Getenv("PATH")))
+
+	// fmt.Println(cmd.Path)
+	for _, plugin := range cfg.Plugins {
+		args := cmd.Args[len(cmd.Args)-1]
+		args = fmt.Sprintf("%s --%s_out=%s", args, plugin.Name, plugin.Output)
+		if plugin.Options != "" {
+			args = fmt.Sprintf("%s --%s_opt=%s", args, plugin.Name, plugin.Options)
+		}
+		cmd.Args[len(cmd.Args)-1] = args
 	}
 
 	for _, i := range cfg.Imports {
-		cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
+		args := cmd.Args[len(cmd.Args)-1]
+		args = fmt.Sprintf("%s --proto_path=%s", args, i)
+		cmd.Args[len(cmd.Args)-1] = args
 	}
 
-	cmd.Args = append(cmd.Args, cfg.Inputs...)
+	for _, i := range cfg.Inputs {
+		args := cmd.Args[len(cmd.Args)-1]
+		args = fmt.Sprintf("%s %s", args, i)
+		cmd.Args[len(cmd.Args)-1] = args
+	}
+
+	fmt.Printf("Executing -> %s\n", cmd.Args[2])
 
 	// return cmd, nil
 	stdout, err := cmd.StdoutPipe()

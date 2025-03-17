@@ -2,8 +2,7 @@
 
 Protocol buffers buffed up :muscle: A lightweight tool for managing your protobuf projects.
 
-Protobuffed was originally developed to ease the workload on developers when working with projects that utilize protocol buffers.
-The process involved in setting up protobuf and plugin binaries can be overwhelming and time consuming particularly when working in teams and ensuring each developer has the same protobuf setup. Protobuffed aims to solve this issue by using a single configuration file that sits in your project's repository and does the heavy lifting so that developers don't have to.
+Protobuffed was originally developed to ease the workload on developers when working with projects that utilize protocol buffers. The process involved in setting up protobuf and plugin binaries can be overwhelming and time consuming particularly when working in teams and ensuring each developer have the same binary versions. Protobuffed aims to solve this issue by using a single configuration file that sits in your project's repository and does the heavy lifting so that developers don't have to.
 
 > :warning: This project is currently in active development and we may make changes (potentially breaking) as we gather feedback from early adopters until we get to the first major release.
 
@@ -12,15 +11,14 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 	- [Initializing a new project](#initializing-a-new-project)
-	- [Adding proto files](#adding-proto-files)
-	- [Adding plugins](#adding-plugins)
+    - [Creating your proto](#creating-your-proto)
+	- [Adding your configuration](#adding-your-configuration)
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
 - [Commands](#commands)
-	- [generate](#generate)
 	- [init](#init)
 	- [install](#install)
-	- [print](#print)
+    - [generate](#generate)
 - [Cache](#cache)
 - [Contributing](#contributing)
 
@@ -28,42 +26,58 @@ The process involved in setting up protobuf and plugin binaries can be overwhelm
 
 Install with `go`:
 
-`go install github.com/armortal/protobuffed@latest`
+`go install github.com/armortal/protobuffed`
 
 ## Getting Started
 
-This getting started guide is based off our example which you can find in the [examples directory](./examples/).
+This getting started guide is based off our example which you can find in the [examples directory](./examples).
 
 ### Initializing a new project
 
-Protobuffed uses a [configuration](#configuration) file that describes the project's plugins and its associated configuration. You can initialize a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
+Protobuffed uses a [configuration](#configuration) file that describes the project's dependencies, plugins and its associated configuration. You can initialize a new project by running `protobuffed init` (generally in the root folder of your project). You will see a newly created file named `protobuffed.json` (can be changed with the `-f` or `--file` flag).
+
+The below example was created with `protobuffed init --name example`
 
 ```json
 {
-    "protobuf": {
-        "version": "21.12"
-    },
-    "imports": [],
-    "inputs": [],
-    "plugins": []
+  "name": "example",
+  "dependencies": {
+    "protoc": "v30.1"
+  },
+  "imports": [],
+  "inputs": [],
+  "plugins": []
 }
 ```
 
-### Adding proto files
+### Creating your proto
 
-Each one of your projects will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an *auth* service in a file named `example.proto`.
+Each one of your projects will have at least one `.proto` file which will have service and message definitions. Let's create service and message definitions for an *Auth* service in a file named `example.proto`. In our example, we are using the third
+party [Google APIs](https://github.com/googleapis/googleapis) options for generating our gRPC Gateway stub.
 
 ```proto
 syntax = "proto3";
 
-option go_package = "github.com/armortal/protobuffed/examples/go;example";
+option go_package = "github.com/armortal/protobuffed/examples";
+
+import "google/api/annotations.proto";
 
 package armortal.protobuffed.example;
 
 service Auth {
-    rpc SignIn(SignInRequest) returns (SignInResponse);
+    rpc SignIn(SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/signin"
+            body: "*"
+        };
+    };
 
-    rpc SignUp(SignUpRequest) returns (SignUpResponse);
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+            post: "/signup"
+            body: "*"
+        };
+    };
 }
 
 message SignInRequest {
@@ -85,28 +99,59 @@ message SignUpResponse {
 }
 ```
 
-Once you have defined your project's `.proto` files, they need to be added to the `inputs` array in the configuration file.
+We now need to add the following to our configuration:
+- The name of the proto file in the **inputs** array.
+- The Google APIs **dependency** so we can import the third party proto definitions.
+- The imports of both the Google APIs dependency and the location of our protos (we need to add this if specifying an import).
+- The plugins and their associated dependencies.
 
 ```json
 {
-    "protobuf": {
-        "version": "21.12"
+  "name": "example",
+  "dependencies": {
+    "protoc": "v30.1",
+    "protoc-gen-go": "v1.36.5",
+    "protoc-gen-go-grpc": "v1.71.0",
+    "protoc-gen-grpc-gateway": "v2.26.1",
+    "protoc-gen-grpc-web": "v1.5.0",
+    "protoc-gen-js": "v3.21.4",
+    "googleapis": "git://github.com/googleapis/googleapis"
+  },
+  "imports": [
+    ".",
+    ".protobuffed/googleapis"
+  ],
+  "inputs": [
+    "example.proto"
+  ],
+  "plugins": [
+    {
+      "name": "go",
+      "options": "paths=source_relative",
+      "output": "./"
     },
-    "imports": [],
-    "inputs": [
-        "example.proto"
-    ],
-    "plugins": []
+    {
+      "name": "go-grpc",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-gateway",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-web",
+      "options": "import_style=commonjs+dts,mode=grpcwebtext",
+      "output": "./"
+    },
+    {
+      "name": "js",
+      "options": "import_style=commonjs,binary",
+      "output": "./"
+    }
+  ]
 }
-```
-
-> :warning: Any imports that you use in your protobuf files also need to be added to `imports` so that the protobuf compiler knows where to look for these imports.
-
-Your project layout should now look like:
-
-```
-|--- example.proto
-|--- protobuffed.json
 ```
 
 ### Adding plugins
@@ -133,62 +178,95 @@ We'll now add the plugins to the configuration file:
 
 ```json
 {
-    "protobuf": {
-        "version": "21.12"
+  "name": "example",
+  "dependencies": {
+    "protoc": "v30.1",
+    "protoc-gen-go": "v1.36.5",
+    "protoc-gen-go-grpc": "v1.71.0",
+    "protoc-gen-grpc-gateway": "v2.26.1",
+    "protoc-gen-grpc-web": "v1.5.0",
+    "protoc-gen-js": "v3.21.4",
+    "googleapis": "git://github.com/googleapis/googleapis"
+  },
+  "imports": [
+    ".",
+    ".protobuffed/googleapis"
+  ],
+  "inputs": [
+    "example.proto"
+  ],
+  "plugins": [
+    {
+      "name": "go",
+      "options": "paths=source_relative",
+      "output": "./"
     },
-    "imports": [],
-    "inputs": [
-        "example.proto"
-    ],
-    "plugins": [
-        {
-            "name": "go",
-            "version": "1.28.1",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "go-grpc",
-            "version": "1.52.3",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "grpc-web",
-            "version": "1.4.2",
-            "options": "import_style=commonjs+dts,mode=grpcwebtext",
-            "output": "_web/"
-        },
-        {
-            "name": "js",
-            "version": "3.21.2",
-            "options": "import_style=commonjs,binary",
-            "output": "_web/"
-        }
-    ]
+    {
+      "name": "go-grpc",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-gateway",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-web",
+      "options": "import_style=commonjs+dts,mode=grpcwebtext",
+      "output": "./"
+    },
+    {
+      "name": "js",
+      "options": "import_style=commonjs,binary",
+      "output": "./"
+    }
+  ]
 }
 ```
+### Install dependencies
+
+In order to generate our code, we need to first run `protobuffed install` to download and install our dependencies. If your
+configuration file location is different to the default (`protobuffed.json`), you can specify this with the `--file` of `-f` option.
+
+After running the command, you will see a newly created folder named `.protobuffed` which contains all your dependencies. 
+You should update your `.gitignore` to include `.protobuffed/` so that the dependencies aren't committed to Git. With the binaries installed and the code generated, your project should now look like:
+
+├── .protobuffed/
+|   ├── protoc/
+|   ├── protoc-gen-go/
+|   ├── protoc-gen-go-grpc/
+|   ├── protoc-gen-grpc-gateway/
+|   ├── protoc-gen-grpc-web/
+|   ├── protoc-gen-js/
+|   ├── googleapis
+├── .gitignore
+├── example.proto
+├── protobuffed.json
 
 ### Generating code
 
-Now that our configuration file is defined, we can now generate source code with `protobuffed generate`. When executing this command, Protobuffed will first check to see if the binaries exist in the [cache](#cache) and if not they will be installed first before the source code is generated.
+Now that our configuration file is defined and our dependencies installed, we can now generate source code with `protobuffed generate`.
 
-> :information_source: If you would like to just install the binaries and not generate the source code, run `protobuffed install`.
-
-If the default cache location is used, you will see a newly created folder named `.protobuffed` which contains `protoc` and `protoc-gen` binaries. You should update your `.gitignore` to include `.protobuffed/` so that the binaries aren't committed to Git. With the binaries installed and the code generated, your project should now look like:
+> :information_source: By default, each dependencies' **bin** folder is added to the path before executing **protoc**.
 
 ```
 ├── .protobuffed/
-|   ├── plugins/
-|   ├── protobuf/
-├── _go/
-|   ├── example.pb.go
-|   ├── example_grpc.pb.go
-├── _web/
-|   ├── example_grpc_web_pb.d.ts
-|   ├── example_grpc_web_pb.js
-|   ├── example_pb.d.ts
-|   ├── example_pb.js
+|   ├── protoc/
+|   ├── protoc-gen-go/
+|   ├── protoc/
+|   ├── protoc-gen-go/
+|   ├── protoc-gen-go-grpc/
+|   ├── protoc-gen-grpc-gateway/
+|   ├── protoc-gen-grpc-web/
+|   ├── protoc-gen-js/
+|   ├── googleapis
+├── example.pb.go
+├── example_grpc.pb.go
+├── example_grpc_web_pb.d.ts
+├── example_grpc_web_pb.js
+├── example_pb.d.ts
+├── example_pb.js
 ├── .gitignore
 ├── example.proto
 ├── protobuffed.json
@@ -196,54 +274,16 @@ If the default cache location is used, you will see a newly created folder named
 
 ## Configuration
 
-A configuration file represents your project's protobuf and plugin configuration.
-
-```json
-{
-    "protobuf": {
-        "version": "21.12"
-    },
-    "imports": [],
-    "inputs": [
-        "example.proto"
-    ],
-    "plugins": [
-        {
-            "name": "go",
-            "version": "1.28.1",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "go-grpc",
-            "version": "1.52.3",
-            "options": "paths=source_relative",
-            "output": "_go/"
-        },
-        {
-            "name": "grpc-web",
-            "version": "1.4.2",
-            "options": "import_style=commonjs+dts,mode=grpcwebtext",
-            "output": "_web/"
-        },
-        {
-            "name": "js",
-            "version": "3.21.2",
-            "options": "import_style=commonjs,binary",
-            "output": "_web/"
-        }
-    ]
-}
-```
+A configuration file represents your project's configuration.
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `protobuf` | [Protobuf](#protobuf) | Protobuf configuration. |
+| `dependencies` | map[string]string | The dependency configuration. If dependency value is a semantic version (e.g. v1.0.0), this must be a registered dependency defined in this project. If not, you must use a `http(s)` or `git` URL. |
 | `imports` | **[]string** | Imports to include. |
 | `inputs` | **[]string** | Proto files to generate source for. |
 | `plugins` | **[][Plugin](#plugin)** | Plugins to include. |
 
-### Protobuf
+### Dependency
 
 | Name | Type | Description |
 | :--- | :--- | :---------- | 
@@ -254,40 +294,49 @@ A configuration file represents your project's protobuf and plugin configuration
 | Name | Type | Description |
 | :--- | :--- | :---------- |
 | `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`, `grpc-web`, and `js`). |
-| `version` | **string** | The plugin version. |
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |
 
-## Commands
+## Command
 
-All commands support the following flags:
+`protobuffed <COMMAND> <OPTIONS>`
 
-- `-c` or `--cache` - path of the cache where binaries will be installed and executed from (default is `.protobuffed`)
-- `-f` or `--file` - path of the configuration file (default is `protobuffed.json`)
-
-### generate
-
-`protobuffed generated` will generate source code for a given configuration. If the binaries are not installed, this command will install them first.
+| Name | Description |
+| [init](#init) | Initializes a new configuration file. |
+| [install](#install) | Install all dependencies. |
+| [generate](#generate) | Run the protoc compiler and generate source files. |
 
 ### init
 
-`protobuffed init` initializes a new configuration file.
+Initializes a new configuration file.
+
+| Options | Short | Description |
+| :------ | :---- | :---------- |
+| `file` | `f` | The path of the configuration file to write (default is `protobuffed.json`) |
+| `name` | `n` | The name of the project. |
 
 ### install
 
-`protobuffed install` will install all binaries for a given configuration.
+Install all dependencies.
 
-### print
+| Options | Short | Description |
+| :------ | :---- | :---------- |
+| `file` | `f` | The path of the configuration file to write (default is `protobuffed.json`) |
 
-`protobuffed print` will print out the `protoc` executable command for a given configuration which you can use to run manually.
+### generate
+
+Run the protoc compiler and generate source files.
+
+| Options | Short | Description |
+| :------ | :---- | :---------- |
+| `file` | `f` | The path of the configuration file to write (default is `protobuffed.json`) |
 
 ## Cache
 
-By default, all binaries are stored in a `.protobuffed` directory in the folder where Protobuffed is executed. You can override the default by specifying the `-c` or `--cache` flag when running commands.
+All dependencies are stored in a `.protobuffed` directory in the folder where Protobuffed is executed.
 
-The `protobuf` binaries are located at `.protobuffed/protobuf/${VERSION}`.
-
-The plugin binaries are located at `.protobuffed/plugins/${NAME}/${VERSION}`.
+For custom dependencies, if you want binaries to be included in the execution $PATH, they must be located in
+a `bin` folder in the dependency folder.
 
 ## Contributing
 

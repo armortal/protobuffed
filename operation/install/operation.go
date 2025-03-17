@@ -24,6 +24,10 @@ import (
 	"github.com/armortal/protobuffed/dependency/custom"
 	"github.com/armortal/protobuffed/dependency/protoc"
 	protocgengo "github.com/armortal/protobuffed/dependency/protoc-gen-go"
+	protocgengogrpc "github.com/armortal/protobuffed/dependency/protoc-gen-go-grpc"
+	protocgengrpcgateway "github.com/armortal/protobuffed/dependency/protoc-gen-grpc-gateway"
+	protocgengrpcweb "github.com/armortal/protobuffed/dependency/protoc-gen-grpc-web"
+	protocgenjs "github.com/armortal/protobuffed/dependency/protoc-gen-js"
 	"golang.org/x/mod/semver"
 )
 
@@ -51,14 +55,14 @@ func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cach
 				dep = new(protoc.Dependency)
 			case "protoc-gen-go":
 				dep = new(protocgengo.Dependency)
-			// case "protoc-gen-go-grpc":
-			// 	dep = new(protocgengogrpc.Dependency)
-			// case "protoc-gen-grpc-gateway":
-			// 	dep = new(protocgengrpcgateway.Dependency)
-			// case "protoc-gen-grpc-web":
-			// 	dep = new(protocgengrpcweb.Dependency)
-			// case "protoc-gen-js":
-			// 	dep = new(protocgenjs.Dependency)
+			case "protoc-gen-go-grpc":
+				dep = new(protocgengogrpc.Dependency)
+			case "protoc-gen-grpc-gateway":
+				dep = new(protocgengrpcgateway.Dependency)
+			case "protoc-gen-grpc-web":
+				dep = new(protocgengrpcweb.Dependency)
+			case "protoc-gen-js":
+				dep = new(protocgenjs.Dependency)
 			default:
 				return protobuffed.ErrDependencyNotSupported
 			}

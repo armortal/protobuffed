@@ -18,7 +18,6 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"bytes"
-	"compress/gzip"
 	"fmt"
 	"io"
 	"os"
@@ -26,19 +25,29 @@ import (
 	"strings"
 )
 
-func ExtractTarGz(src string, dst string) error {
-	// Open the file to create a reader.
+// Extract extracts the archive at src to the directory dst. If the archive
+// format is not supported or there was an error extracting, an error is returned.
+func Extract(src string, dst string) error {
+	switch filepath.Ext(src) {
+	case ".tar":
+		return ExtractTar(src, dst)
+	case ".zip":
+		return ExtractZip(src, dst)
+	default:
+		return fmt.Errorf("unsupported archive format")
+	}
+}
+
+func ExtractTar(src string, dst string) error {
 	f, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	// Create a new gzip reader.
-	r, err := gzip.NewReader(f)
-	if err != nil {
-		return err
-	}
-	defer r.Close()
+	defer f.Close()
+	return extractTarFromReader(f, dst)
+}
 
+func extractTarFromReader(r io.Reader, dst string) error {
 	t := tar.NewReader(r)
 
 	for {
@@ -105,6 +114,7 @@ func ExtractZipFromBytes(b []byte, dst string) error {
 	}
 	return nil
 }
+
 func extractZip(f *zip.File, dst string) error {
 	fp := filepath.Join(dst, f.Name)
 	if !strings.HasPrefix(fp, filepath.Clean(dst)+string(os.PathSeparator)) {

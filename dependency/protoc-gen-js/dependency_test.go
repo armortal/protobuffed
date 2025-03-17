@@ -26,7 +26,7 @@ import (
 
 func TestDirectory_Install(t *testing.T) {
 	dep := Dependency{}
-	name := "protoc-gen-grpc-gateway"
+	name := "protoc-gen-js"
 
 	c, err := cache.New()
 	if err != nil {
@@ -35,7 +35,7 @@ func TestDirectory_Install(t *testing.T) {
 
 	dir := c.Directory(name)
 
-	if err := dep.Install(context.Background(), dir, "v3.21.2"); err != nil {
+	if err := dep.Install(context.Background(), dir, "v3.21.4"); err != nil {
 		t.Fatal(err)
 	}
 

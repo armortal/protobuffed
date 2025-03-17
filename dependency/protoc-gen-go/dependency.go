@@ -54,6 +54,8 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 
 	// Get the release and url.
 	release := fmt.Sprintf("protoc-gen-go.%s.%s", version, platform)
+	releasePath := dir.Join(release)
+
 	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-go/releases/download/%s/%s", version, release)
 
 	// Download and extract.
@@ -72,19 +74,25 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 	}
 
 	// Create the bin folder
-	bin := filepath.Join(dir.Path(), "bin")
-	if err := os.Mkdir(bin, 0700); err != nil {
+	if err := os.Mkdir(dir.Join("bin"), 0700); err != nil {
 		return err
 	}
 
-	if strings.HasSuffix(release, ".zip") {
-		if err := util.ExtractZip(release, bin); err != nil {
-			return err
-		}
-	} else {
-		if err := util.ExtractTarGz(release, bin); err != nil {
+	// Decompress all .gz files.
+	if filepath.Ext(release) == ".gz" {
+		if err := util.DecompressGz(releasePath, dir.Join(strings.TrimSuffix(release, ".gz"))); err != nil {
 			return err
 		}
 	}
+
+	// Extract the archive.
+	if err := util.Extract(dir.Join(strings.TrimSuffix(release, ".gz")), dir.Join("bin")); err != nil {
+		return err
+	}
+
+	if err := os.Chmod(filepath.Join(dir.Path(), "bin", "protoc-gen-go"), 0700); err != nil {
+		return err
+	}
+
 	return nil
 }

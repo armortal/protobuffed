@@ -17,8 +17,10 @@ package protocgengrpcweb
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/armortal/protobuffed"
 	"github.com/armortal/protobuffed/cache"
@@ -61,11 +63,17 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 		return protobuffed.ErrRuntimeNotSupported
 	}
 
-	release := fmt.Sprintf("protoc-gen-grpc-web-%s-%s", version, platform)
+	v := strings.TrimPrefix(version, "v")
 
-	url := fmt.Sprintf("https://github.com/grpc/grpc-web/releases/download/%s/%s", version, release)
+	release := fmt.Sprintf("protoc-gen-grpc-web-%s-%s", v, platform)
 
-	output := filepath.Join(dir.Path(), "bin")
+	url := fmt.Sprintf("https://github.com/grpc/grpc-web/releases/download/%s/%s", v, release)
+
+	if err := os.MkdirAll(filepath.Join(dir.Path(), "bin"), 0700); err != nil {
+		return err
+	}
+
+	output := filepath.Join(dir.Path(), "bin", "protoc-gen-grpc-web")
 	if runtime.GOOS == "windows" {
 		output += ".exe"
 	}

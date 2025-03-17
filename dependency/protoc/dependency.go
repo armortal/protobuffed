@@ -3,7 +3,12 @@ package protoc
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/armortal/protobuffed"
 	"github.com/armortal/protobuffed/cache"
@@ -38,14 +43,25 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 		return protobuffed.ErrRuntimeNotSupported
 	}
 
-	release := fmt.Sprintf("protoc-%s-%s.zip", version, platform)
+	release := fmt.Sprintf("protoc-%s-%s.zip", strings.TrimPrefix(version, "v"), platform)
 
 	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf/releases/download/%s/%s", version, release)
-	if err := util.Download(url, dir.Path()); err != nil {
+
+	r, err := http.Get(url)
+	if err != nil {
 		return err
 	}
 
-	if err := util.ExtractZip(release, dir.Path()); err != nil {
+	b, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := util.ExtractZipFromBytes(b, dir.Path()); err != nil {
+		return err
+	}
+
+	if err := os.Chmod(filepath.Join(dir.Path(), "bin", "protoc"), 0700); err != nil {
 		return err
 	}
 

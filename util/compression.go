@@ -12,38 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package protocgengo
+package util
 
 import (
-	"context"
+	"compress/gzip"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
-	"runtime"
-	"testing"
-
-	"github.com/armortal/protobuffed/cache"
 )
 
-func TestDependency_Install(t *testing.T) {
-	dep := Dependency{}
+func Decompress(src string, dst string) error {
+	switch filepath.Ext(src) {
+	case ".gz":
+		return DecompressGz(src, dst)
+	default:
+		return fmt.Errorf("unsupported compression format")
+	}
+}
 
-	c, err := cache.New()
+func DecompressGz(src string, dst string) error {
+	// Open the file to create a reader.
+	f, err := os.Open(src)
 	if err != nil {
-		t.Fatal(err)
+		return err
+	}
+	// Create a new gzip reader.
+	r, err := gzip.NewReader(f)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	b, err := io.ReadAll(r)
+	if err != nil {
+		return err
 	}
 
-	dir := c.Directory("protoc-gen-go")
-
-	if err := dep.Install(context.Background(), dir, "v1.36.5"); err != nil {
-		t.Fatal(err)
+	// Write the decompressed data to the destination file.
+	if err := os.WriteFile(dst, b, 0700); err != nil {
+		return err
 	}
 
-	binary := "protoc-gen-go"
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
-
-	if _, err := os.Stat(filepath.Join(dir.Path(), "bin", binary)); os.IsNotExist(err) {
-		t.Fatal("binary doesn't exist")
-	}
+	return nil
 }

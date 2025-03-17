@@ -13,7 +13,7 @@
 			"args": [
 				"generate",
 				"-f",
-				"../../testing/protobuffed.json",
+				"../../examples/protobuffed.json",
 			]
 		},
 		{
@@ -25,7 +25,7 @@
 			"args": [
 				"install",
 				"-f",
-				"../../testing/protobuffed.json"
+				"../../examples/protobuffed.json"
 			]
 		},
 	]

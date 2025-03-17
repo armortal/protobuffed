@@ -26,7 +26,12 @@ func Command() *cobra.Command {
 		Use:   "generate",
 		Short: "Generate source code",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cfg, err := config.Read()
+			f, err := cmd.Flags().GetString("file")
+			if err != nil {
+				return err
+			}
+
+			cfg, err := config.ReadFile(f)
 			if err != nil {
 				return err
 			}
@@ -35,6 +40,7 @@ func Command() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			return generate.Execute(cmd.Context(), cfg, c)
 		},
 	}

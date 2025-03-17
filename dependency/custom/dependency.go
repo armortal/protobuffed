@@ -2,7 +2,10 @@ package custom
 
 import (
 	"context"
+	"fmt"
 	"net/url"
+	"os/exec"
+	"strings"
 
 	"github.com/armortal/protobuffed"
 	"github.com/armortal/protobuffed/cache"
@@ -30,5 +33,10 @@ func (d *Dependency) installHttp(ctx context.Context, dir *cache.Directory, url 
 }
 
 func (d *Dependency) installGit(ctx context.Context, dir *cache.Directory, url *url.URL) error {
+	u := strings.Replace(url.String(), "git://", "https://", 1)
+	cmd := exec.Command("sh", "-c", fmt.Sprintf("git clone %s %s", u, dir.Path()))
+	if err := cmd.Run(); err != nil {
+		return err
+	}
 	return nil
 }

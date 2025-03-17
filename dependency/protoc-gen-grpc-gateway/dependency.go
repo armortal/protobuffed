@@ -51,8 +51,7 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 	release := fmt.Sprintf("protoc-gen-grpc-gateway-%s-%s", version, platform)
 
 	// /v2.19.1/protoc-gen-grpc-gateway-v2.19.1-darwin-arm64
-	url := fmt.Sprintf("https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v%s/%s", version, release)
-	fmt.Println(url)
+	url := fmt.Sprintf("https://github.com/grpc-ecosystem/grpc-gateway/releases/download/%s/%s", version, release)
 	bin := filepath.Join(dir.Path(), "bin")
 	// Create the bin folder
 	if err := os.MkdirAll(bin, 0700); err != nil {

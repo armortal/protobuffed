@@ -116,6 +116,10 @@ func (d *Directory) Path() string {
 	return d.path
 }
 
+func (d *Directory) Join(path string) string {
+	return filepath.Join(d.path, path)
+}
+
 func (d *Directory) Write(name string, data []byte, perm os.FileMode) error {
 	return os.WriteFile(filepath.Join(d.path, name), data, perm)
 }

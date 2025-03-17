@@ -14,14 +14,26 @@
 
 syntax = "proto3";
 
-option go_package = "github.com/armortal/protobuffed/examples/genproto";
+option go_package = "github.com/armortal/protobuffed/examples";
+
+import "google/api/annotations.proto";
 
 package armortal.protobuffed.example;
 
 service Auth {
-    rpc SignIn(SignInRequest) returns (SignInResponse);
+    rpc SignIn(SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/signin"
+            body: "*"
+        };
+    };
 
-    rpc SignUp(SignUpRequest) returns (SignUpResponse);
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+            post: "/signup"
+            body: "*"
+        };
+    };
 }
 
 message SignInRequest {

@@ -17,8 +17,10 @@ package protocgenjs
 import (
 	"context"
 	"fmt"
-	"path/filepath"
+	"io"
+	"net/http"
 	"runtime"
+	"strings"
 
 	"github.com/armortal/protobuffed"
 	"github.com/armortal/protobuffed/cache"
@@ -61,15 +63,20 @@ func (d *Dependency) Install(ctx context.Context, dir *cache.Directory, version 
 		return protobuffed.ErrRuntimeNotSupported
 	}
 
-	release := fmt.Sprintf("protobuf-javascript-%s-%s.zip", version, platform)
+	release := fmt.Sprintf("protobuf-javascript-%s-%s.zip", strings.TrimPrefix(version, "v"), platform)
 	url := fmt.Sprintf("https://github.com/protocolbuffers/protobuf-javascript/releases/download/%s/%s", version, release)
 
-	archive := filepath.Join(dir.Path(), release)
-	if err := util.Download(url, archive); err != nil {
+	r, err := http.Get(url)
+	if err != nil {
 		return err
 	}
 
-	if err := util.ExtractZip(archive, dir.Path()); err != nil {
+	b, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+
+	if err := util.ExtractZipFromBytes(b, dir.Path()); err != nil {
 		return err
 	}
 
