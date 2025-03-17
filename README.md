@@ -15,6 +15,9 @@ Protobuffed was originally developed to ease the workload on developers when wor
 	- [Adding your configuration](#adding-your-configuration)
 	- [Generating code](#generating-code)
 - [Configuration](#configuration)
+- [Dependencies](#dependencies)
+    - [Registered](#registered)
+    - [Custom](#custom)
 - [Commands](#commands)
 	- [init](#init)
 	- [install](#install)
@@ -101,9 +104,9 @@ message SignUpResponse {
 
 We now need to add the following to our configuration:
 - The name of the proto file in the **inputs** array.
+- The plugins and their associated dependencies.
 - The Google APIs **dependency** so we can import the third party proto definitions.
 - The imports of both the Google APIs dependency and the location of our protos (we need to add this if specifying an import).
-- The plugins and their associated dependencies.
 
 ```json
 {
@@ -154,76 +157,6 @@ We now need to add the following to our configuration:
 }
 ```
 
-### Adding plugins
-
-You can one or more plugins in a single configuration file for your project. Protobuffed supports the following plugins:
-
-| Name | Source |
-| :--- | :--------- |
-| **go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
-| **go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
-| **grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
-| **js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
-
-Let's create some folders where our generated code will be for `go` and `web` projects. Your project should now look like
-
-```
-|--- _go/
-|--- _web/
-|--- example.proto
-|--- protobuffed.json
-```
-
-We'll now add the plugins to the configuration file:
-
-```json
-{
-  "name": "example",
-  "dependencies": {
-    "protoc": "v30.1",
-    "protoc-gen-go": "v1.36.5",
-    "protoc-gen-go-grpc": "v1.71.0",
-    "protoc-gen-grpc-gateway": "v2.26.1",
-    "protoc-gen-grpc-web": "v1.5.0",
-    "protoc-gen-js": "v3.21.4",
-    "googleapis": "git://github.com/googleapis/googleapis"
-  },
-  "imports": [
-    ".",
-    ".protobuffed/googleapis"
-  ],
-  "inputs": [
-    "example.proto"
-  ],
-  "plugins": [
-    {
-      "name": "go",
-      "options": "paths=source_relative",
-      "output": "./"
-    },
-    {
-      "name": "go-grpc",
-      "options": "paths=source_relative",
-      "output": "./"
-    },
-    {
-      "name": "grpc-gateway",
-      "options": "paths=source_relative",
-      "output": "./"
-    },
-    {
-      "name": "grpc-web",
-      "options": "import_style=commonjs+dts,mode=grpcwebtext",
-      "output": "./"
-    },
-    {
-      "name": "js",
-      "options": "import_style=commonjs,binary",
-      "output": "./"
-    }
-  ]
-}
-```
 ### Install dependencies
 
 In order to generate our code, we need to first run `protobuffed install` to download and install our dependencies. If your
@@ -271,6 +204,33 @@ Now that our configuration file is defined and our dependencies installed, we ca
 ├── example.proto
 ├── protobuffed.json
 ```
+
+## Dependencies
+
+All projects will have at least one dependency. There are both [registered](#registered) and [custom](#custom) dependencies which can be included.
+
+### Registered
+
+The following dependencies are registered and implemented in this project. They can be used directly with semantic versions (e.g. v0.1.0)
+
+| Name | Source |
+| :--- | :--------- |
+| **protoc** | [https://github.com/protocolbuffers/protobuf](https://github.com/protocolbuffers/protobuf) |
+| **protoc-gen-go** | [https://github.com/protocolbuffers/protobuf-go](https://github.com/protocolbuffers/protobuf-go) |
+| **protoc-gen-go-grpc** | [https://github.com/grpc/grpc-go](https://github.com/grpc/grpc-go) |
+| **protoc-gen-grpc-gateway** | [https://github.com/grpc-ecosystem/grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) |
+| **protoc-gen-grpc-web** | [https://github.com/grpc/grpc-web](https://github.com/grpc/grpc-web) |
+| **protoc-gen-js** | [https://github.com/protocolbuffers/protobuf-javascript](https://github.com/protocolbuffers/protobuf-javascript) |
+
+### Custom
+
+If you require a dependency that is not registered, you can include them using a URL with the following schemes:
+
+| Scheme | Description |
+| :----- | :---------- |
+| `git` | Clone a git repository using `git clone`. You must have `git` installed. |
+| `http` | Download via http. |
+| `https` | Download via https. |
 
 ## Configuration
 
