@@ -14,10 +14,10 @@ Protobuffed was originally developed to ease the workload on developers when wor
     - [Creating your proto](#creating-your-proto)
 	- [Adding your configuration](#adding-your-configuration)
 	- [Generating code](#generating-code)
-- [Configuration](#configuration)
 - [Dependencies](#dependencies)
     - [Registered](#registered)
     - [Custom](#custom)
+- [Configuration](#configuration)
 - [Commands](#commands)
 	- [init](#init)
 	- [install](#install)
@@ -242,12 +242,6 @@ A configuration file represents your project's configuration.
 | `imports` | **[]string** | Imports to include. |
 | `inputs` | **[]string** | Proto files to generate source for. |
 | `plugins` | **[][Plugin](#plugin)** | Plugins to include. |
-
-### Dependency
-
-| Name | Type | Description |
-| :--- | :--- | :---------- | 
-| `version` | **string** | The version of protobuf to use. |
 
 ### Plugin
 
