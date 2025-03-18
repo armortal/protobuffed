@@ -165,6 +165,7 @@ configuration file location is different to the default (`protobuffed.json`), yo
 After running the command, you will see a newly created folder named `.protobuffed` which contains all your dependencies. 
 You should update your `.gitignore` to include `.protobuffed/` so that the dependencies aren't committed to Git. With the binaries installed and the code generated, your project should now look like:
 
+```
 ├── .protobuffed/
 |   ├── protoc/
 |   ├── protoc-gen-go/
@@ -176,10 +177,11 @@ You should update your `.gitignore` to include `.protobuffed/` so that the depen
 ├── .gitignore
 ├── example.proto
 ├── protobuffed.json
+```
 
 ### Generating code
 
-Now that our configuration file is defined and our dependencies installed, we can now generate source code with `protobuffed generate`.
+Now that our configuration file is defined and our dependencies installed, we can now generate source code with `protobuffed generate`. Below is an example of your directory after executing the command.
 
 > :information_source: By default, each dependencies' **bin** folder is added to the path before executing **protoc**.
 
@@ -247,15 +249,16 @@ A configuration file represents your project's configuration.
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `name` | **string** | The plugin name (supported plugins are `go`,`go-grpc`, `grpc-web`, and `js`). |
+| `name` | **string** | The plugin name. This must be the full binary name and must be found in a dependencies' **bin** folder or environment **PATH**. |
 | `options` | **string** | A comma separated string of plugin options in the form of KEY=VALUE (e.g. `KEY1=VALUE1,KEY2=VALUE2`)
 | `output` | **string** | The output path. |
 
-## Command
+## Commands
 
-`protobuffed <COMMAND> <OPTIONS>`
+Execute commands with `protobuffed <COMMAND> <OPTIONS>`
 
 | Name | Description |
+| :--- | :---------- |
 | [init](#init) | Initializes a new configuration file. |
 | [install](#install) | Install all dependencies. |
 | [generate](#generate) | Run the protoc compiler and generate source files. |
@@ -289,8 +292,10 @@ Run the protoc compiler and generate source files.
 
 All dependencies are stored in a `.protobuffed` directory in the folder where Protobuffed is executed.
 
-For custom dependencies, if you want binaries to be included in the execution $PATH, they must be located in
-a `bin` folder in the dependency folder.
+Each subfolder named after the key name in your dependencies' configuration.
+
+For custom dependencies, if you want binaries to be included in the execution path, they must be located in
+a `bin` folder within the dependency folder (e.g. `.protobuffed/<YOUR_DEPENDENCY>/bin`)
 
 ## Contributing
 

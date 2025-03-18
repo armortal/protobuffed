@@ -61,7 +61,6 @@ func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cach
 
 	cmd.Env = append(cmd.Env, fmt.Sprintf("PATH=%s:%s", path, os.Getenv("PATH")))
 
-	// fmt.Println(cmd.Path)
 	for _, plugin := range cfg.Plugins {
 		args := cmd.Args[len(cmd.Args)-1]
 		args = fmt.Sprintf("%s --%s_out=%s", args, plugin.Name, plugin.Output)
