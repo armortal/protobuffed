@@ -12,4 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package generate
+package custom
+
+import (
+	"context"
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/armortal/protobuffed/cache"
+)
+
+func TestDependency_Install(t *testing.T) {
+	dep := Dependency{}
+
+	c, err := cache.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dir := c.Directory("protobuffed")
+
+	if err := dep.Install(context.Background(), dir, "https://github.com/armortal/protobuffed/archive/refs/heads/main.zip"); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := os.Stat(filepath.Join(dir.Path(), "main.zip")); os.IsNotExist(err) {
+		t.Fatal("zip doesn't exist")
+	}
+}
