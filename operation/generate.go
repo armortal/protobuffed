@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package generate
+package operation
 
 import (
 	"bufio"
@@ -27,16 +27,10 @@ import (
 	"github.com/armortal/protobuffed/config"
 )
 
-func Execute(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
-	return new(Operation).Execute(ctx, cfg, cache)
-}
-
-type Operation struct{}
-
 // Execute will generate the source code using the given configuration file.
 // Calling this function will assume the binaries have been installed.
 // If an error occurs, it will be returned.
-func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
+func Generate(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("cmd", "/c", "protoc")
@@ -116,32 +110,4 @@ func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cach
 		return err
 	}
 	return nil
-}
-
-func command(config *config.Config, cache string) (*exec.Cmd, error) {
-	// if err := config.validate(); err != nil {
-	// 	return nil, err
-	// }
-
-	// cmd := exec.Command(protobufBinaryPath(cache, config.Protobuf.Version))
-
-	// for _, plugin := range config.Plugins {
-
-	// 	cmd.Args = append(cmd.Args,
-	// 		fmt.Sprintf("--plugin=protoc-gen-%s=%s", plugin.Name, pluginBinaryPath(cache, plugin.Name, plugin.Version)))
-	// 	cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_out=%s", plugin.Name, plugin.Output))
-	// 	if plugin.Options != "" {
-	// 		cmd.Args = append(cmd.Args, fmt.Sprintf("--%s_opt=%s", plugin.Name, plugin.Options))
-	// 	}
-
-	// }
-
-	// for _, i := range config.Imports {
-	// 	cmd.Args = append(cmd.Args, fmt.Sprintf("--proto_path=%s", i))
-	// }
-
-	// cmd.Args = append(cmd.Args, config.Inputs...)
-
-	// return cmd, nil
-	return nil, nil
 }

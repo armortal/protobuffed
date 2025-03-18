@@ -17,7 +17,7 @@ package generate
 import (
 	"github.com/armortal/protobuffed/cache"
 	"github.com/armortal/protobuffed/config"
-	"github.com/armortal/protobuffed/operation/generate"
+	"github.com/armortal/protobuffed/operation"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ func Command() *cobra.Command {
 				return err
 			}
 
-			return generate.Execute(cmd.Context(), cfg, c)
+			return operation.Generate(cmd.Context(), cfg, c)
 		},
 	}
 

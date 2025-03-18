@@ -21,6 +21,7 @@ import (
 	"github.com/armortal/protobuffed/cmd/protobuffed/generate"
 	cmdinit "github.com/armortal/protobuffed/cmd/protobuffed/init"
 	"github.com/armortal/protobuffed/cmd/protobuffed/install"
+	"github.com/armortal/protobuffed/cmd/protobuffed/run"
 	"github.com/spf13/cobra"
 )
 
@@ -35,6 +36,7 @@ func main() {
 	cmd.AddCommand(cmdinit.Command())
 	cmd.AddCommand(generate.Command())
 	cmd.AddCommand(install.Command())
+	cmd.AddCommand(run.Command())
 
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
