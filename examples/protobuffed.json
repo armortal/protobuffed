@@ -7,7 +7,8 @@
     "protoc-gen-grpc-gateway": "v2.26.1",
     "protoc-gen-grpc-web": "v1.5.0",
     "protoc-gen-js": "v3.21.4",
-    "googleapis": "git://github.com/googleapis/googleapis"
+    "googleapis": "git://github.com/googleapis/googleapis",
+    "armortal": "https://github.com/armortal/protobuffed/archive/refs/heads/main.zip"
   },
   "imports": [
     ".",
@@ -42,5 +43,9 @@
       "options": "import_style=commonjs,binary",
       "output": "./"
     }
-  ]
+  ],
+  "scripts": {
+    "unzipInline": "unzip -o .protobuffed/armortal/main.zip -d .protobuffed/armortal && mv .protobuffed/armortal/protobuffed-main/* .protobuffed/armortal && rm -rf .protobuffed/armortal/protobuffed-main .protobuffed/armortal/main.zip",
+    "unzip": "scripts/unzip.sh"
+  }
 }

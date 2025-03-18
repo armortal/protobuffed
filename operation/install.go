@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package install
+package operation
 
 import (
 	"context"
@@ -31,13 +31,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-func Execute(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
-	return new(Operation).Execute(ctx, cfg, cache)
-}
-
-type Operation struct{}
-
-func (o *Operation) Execute(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
+func Install(ctx context.Context, cfg *config.Config, cache *cache.Cache) error {
 	if err := cache.RemoveAll(); err != nil {
 		return err
 	}

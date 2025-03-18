@@ -27,6 +27,7 @@ type Config struct {
 	Imports      []string          `json:"imports"`
 	Inputs       []string          `json:"inputs"`
 	Plugins      []*PluginConfig   `json:"plugins"`
+	Scripts      map[string]string `json:"scripts"`
 }
 
 type PluginConfig struct {

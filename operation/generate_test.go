@@ -13,14 +13,3 @@
 // limitations under the License.
 
 package operation
-
-import (
-	"context"
-
-	"github.com/armortal/protobuffed/config"
-)
-
-type Operation interface {
-	// Execute runs the operation with the given configuration.
-	Execute(ctx context.Context, cfg *config.Config) error
-}

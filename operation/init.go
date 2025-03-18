@@ -12,33 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package init
+package operation
 
 import (
-	"github.com/armortal/protobuffed/operation"
-	"github.com/spf13/cobra"
+	"context"
+	"encoding/json"
+	"os"
+
+	"github.com/armortal/protobuffed/config"
 )
 
-func Command() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "init",
-		Short: "Initialize a new project",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			file, err := cmd.Flags().GetString("file")
-			if err != nil {
-				return err
-			}
-
-			name, err := cmd.Flags().GetString("name")
-			if err != nil {
-				return err
-			}
-
-			return operation.Init(cmd.Context(), file, name)
+func Init(ctx context.Context, file string, name string) error {
+	config := &config.Config{
+		Name: name,
+		Dependencies: map[string]string{
+			"protoc": "v30.1",
 		},
+		Imports: make([]string, 0),
+		Inputs:  make([]string, 0),
+		Plugins: make([]*config.PluginConfig, 0),
+		Scripts: make(map[string]string),
 	}
 
-	cmd.Flags().StringP("name", "n", "", "The name of the project")
+	b, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return err
+	}
 
-	return cmd
+	if err := os.WriteFile(file, b, 0700); err != nil {
+		return err
+	}
+
+	return nil
 }

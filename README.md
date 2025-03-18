@@ -21,7 +21,8 @@ Protobuffed was originally developed to ease the workload on developers when wor
 - [Commands](#commands)
 	- [init](#init)
 	- [install](#install)
-    - [generate](#generate)
+  - [run](#run)
+  - [generate](#generate)
 - [Cache](#cache)
 - [Contributing](#contributing)
 
@@ -49,7 +50,8 @@ The below example was created with `protobuffed init --name example`
   },
   "imports": [],
   "inputs": [],
-  "plugins": []
+  "plugins": [],
+  "scripts" : {}
 }
 ```
 
@@ -234,16 +236,76 @@ If you require a dependency that is not registered, you can include them using a
 | `http` | Download via http. |
 | `https` | Download via https. |
 
+If you need to add some further logic than just simply downloading a custom dependency (e.g. build a binary, unzip a file), you can add
+it to the `scripts` section of your configuration file and execute it with the `run` command prior to generating your files.
+
+For example, to continue from our example above, if we need to download this repository's contents and unzip it we can add an inline script or call one like the following:
+
+```json
+{
+  "name": "example",
+  "dependencies": {
+    "protoc": "v30.1",
+    "protoc-gen-go": "v1.36.5",
+    "protoc-gen-go-grpc": "v1.71.0",
+    "protoc-gen-grpc-gateway": "v2.26.1",
+    "protoc-gen-grpc-web": "v1.5.0",
+    "protoc-gen-js": "v3.21.4",
+    "googleapis": "git://github.com/googleapis/googleapis",
+    "armortal": "https://github.com/armortal/protobuffed/archive/refs/heads/main.zip"
+  },
+  "imports": [
+    ".",
+    ".protobuffed/googleapis"
+  ],
+  "inputs": [
+    "example.proto"
+  ],
+  "plugins": [
+    {
+      "name": "go",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "go-grpc",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-gateway",
+      "options": "paths=source_relative",
+      "output": "./"
+    },
+    {
+      "name": "grpc-web",
+      "options": "import_style=commonjs+dts,mode=grpcwebtext",
+      "output": "./"
+    },
+    {
+      "name": "js",
+      "options": "import_style=commonjs,binary",
+      "output": "./"
+    }
+  ],
+  "scripts": {
+    "unzipInline": "unzip -o .protobuffed/armortal/main.zip -d .protobuffed/armortal && mv .protobuffed/armortal/protobuffed-main/* .protobuffed/armortal && rm -rf .protobuffed/armortal/protobuffed-main .protobuffed/armortal/main.zip",
+    "unzip": "scripts/unzip.sh"
+  }
+}
+```
+
 ## Configuration
 
 A configuration file represents your project's configuration.
 
 | Name | Type | Description |
 | :--- | :--- | :---------- |
-| `dependencies` | map[string]string | The dependency configuration. If dependency value is a semantic version (e.g. v1.0.0), this must be a registered dependency defined in this project. If not, you must use a `http(s)` or `git` URL. |
+| `dependencies` | **map[string]string** | The dependency configuration. If dependency value is a semantic version (e.g. v1.0.0), this must be a registered dependency defined in this project. If not, you must use a `http(s)` or `git` URL. |
 | `imports` | **[]string** | Imports to include. |
 | `inputs` | **[]string** | Proto files to generate source for. |
 | `plugins` | **[][Plugin](#plugin)** | Plugins to include. |
+| `scripts` | **map[string]string** | A map of scripts to define that can be executed via the `run` command. |
 
 ### Plugin
 
@@ -261,6 +323,7 @@ Execute commands with `protobuffed <COMMAND> <OPTIONS>`
 | :--- | :---------- |
 | [init](#init) | Initializes a new configuration file. |
 | [install](#install) | Install all dependencies. |
+| [run](#run) | Run a script in the configuration. |
 | [generate](#generate) | Run the protoc compiler and generate source files. |
 
 ### init
@@ -278,7 +341,17 @@ Install all dependencies.
 
 | Options | Short | Description |
 | :------ | :---- | :---------- |
-| `file` | `f` | The path of the configuration file to write (default is `protobuffed.json`) |
+| `file` | `f` | The path of the configuration file to read (default is `protobuffed.json`) |
+
+
+### run
+
+Run a script defined in the configuration file. The command is `protobuffed run <SCRIPT_NAME>` where **SCRIPT_NAME** is
+one that is defined in the `scripts` section of the configuration file.
+
+| Options | Short | Description |
+| :------ | :---- | :---------- |
+| `file` | `f` | The path of the configuration file to read (default is `protobuffed.json`) |
 
 ### generate
 
@@ -286,7 +359,7 @@ Run the protoc compiler and generate source files.
 
 | Options | Short | Description |
 | :------ | :---- | :---------- |
-| `file` | `f` | The path of the configuration file to write (default is `protobuffed.json`) |
+| `file` | `f` | The path of the configuration file to read (default is `protobuffed.json`) |
 
 ## Cache
 
